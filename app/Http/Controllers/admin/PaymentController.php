@@ -1,0 +1,89 @@
+<?php
+
+namespace App\Http\Controllers\admin;
+
+use App\Models\Order;
+use App\Models\Payment;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+class PaymentController extends Controller
+{
+    /**
+     * Display a listing of payments.
+     */
+    public function index(Request $request)
+    {
+        $query = Payment::with(['order.customer', 'order.user'])->latest();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('order', function($q) use ($search) {
+                $q->where('order_no', 'LIKE', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('method')) {
+            $query->where('payment_method', $request->method);
+        }
+
+        $payments = $query->paginate(10);
+
+        return view('admin.payments.index', compact('payments'));
+    }
+
+    /**
+     * Display the specified payment.
+     */
+    public function show(Payment $payment)
+    {
+        $payment->load(['order.items.menuItem', 'order.customer', 'order.diningTable', 'order.user']);
+        return view('admin.payments.show', compact('payment'));
+    }
+
+    /**
+     * Process a payment for an order.
+     */
+    public function process(Request $request, Order $order)
+    {
+        $request->validate([
+            'payment_method' => 'required|in:cash,card,qr,khqr',
+            'paid_amount' => 'required|numeric|min:' . $order->total_amount,
+        ]);
+
+        $change = $request->paid_amount - $order->total_amount;
+
+        $payment = $order->payment()->create([
+            'payment_method' => $request->payment_method,
+            'total_amount' => $order->total_amount,
+            'paid_amount' => $request->paid_amount,
+            'change_amount' => $change,
+            'status' => 'paid',
+            'paid_at' => now(),
+        ]);
+
+        $order->update(['status' => 'completed']);
+        
+        session()->flash('success', 'Payment processed successfully!');
+
+        if ($request->wantsJson()) {
+            return response()->json($payment);
+        }
+
+        return redirect()->route('payments.show', $payment->id);
+    }
+
+    /**
+     * Get receipt view with autoprint.
+     */
+    public function receipt(Order $order)
+    {
+        $payment = $order->payment;
+        if (!$payment) {
+            return redirect()->back()->with('error', 'No payment found for this order.');
+        }
+
+        $payment->load(['order.items.menuItem', 'order.customer', 'order.diningTable', 'order.user']);
+        return view('admin.payments.show', compact('payment'))->with('autoPrint', true);
+    }
+}
