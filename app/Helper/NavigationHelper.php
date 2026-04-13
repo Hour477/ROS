@@ -48,7 +48,7 @@ class NavigationHelper
                         'icon' => 'table',
                         'activePattern' => 'tables.*',
                     ],
-                    
+
                 ],
             ],
             [
@@ -112,6 +112,12 @@ class NavigationHelper
                         'route' => 'currencies.index',
                         'icon' => 'banknote',
                         'activePattern' => 'currencies.*',
+                    ],
+                    [
+                        'label' => 'Translations',
+                        'route' => 'translations.index',
+                        'icon' => 'languages',
+                        'activePattern' => 'translations.*',
                     ],
                     [
                         'label' => 'Settings',

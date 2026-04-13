@@ -17,10 +17,7 @@ class TableController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'LIKE', "%{$search}%")
-                  ->orWhere('name_kh', 'LIKE', "%{$search}%");
-            });
+            $query->where('name', 'LIKE', "%{$search}%");
         }
 
         if ($request->filled('status')) {
@@ -47,7 +44,6 @@ class TableController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:tables,name',
-            'name_kh' => 'nullable|string|max:255',
             'capacity' => 'required|integer|min:1',
             'status' => 'required|in:available,occupied,reserved',
         ]);
@@ -80,7 +76,6 @@ class TableController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:tables,name,' . $table->id,
-            'name_kh' => 'nullable|string|max:255',
             'capacity' => 'required|integer|min:1',
             'status' => 'required|in:available,occupied,reserved',
         ]);

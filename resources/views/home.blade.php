@@ -7,12 +7,12 @@
     <!-- Hero / Welcome -->
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-5 gap-3">
         <div>
-            <h1 class="fw-black mb-1" style="color: #0f172a; letter-spacing: -1px;">Dashboard Overview</h1>
-            <p class="text-muted fw-bold small text-uppercase mb-0 tracking-wider">Welcome back, {{ auth()->user()->name }} • Managing Service for {{ date('M d, Y') }}</p>
+            <h1 class="fw-black mb-1" style="color: #0f172a; letter-spacing: -1px;">{{ __('Dashboard Overview') }}</h1>
+            <p class="text-muted fw-bold small text-uppercase mb-0 tracking-wider">{{ __('Welcome back') }}, {{ auth()->user()->name }} • {{ __('Managing Service for') }} {{ date('M d, Y') }}</p>
         </div>
         <div class="d-flex gap-2">
             <a href="{{ route('orders.create') }}" class="btn btn-premium-action shadow-sm">
-                <i data-lucide="plus-circle" class="me-2"></i> New Order
+                <i data-lucide="plus-circle" class="me-2"></i> {{ __('New Order') }}
             </a>
         </div>
     </div>

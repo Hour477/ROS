@@ -15,7 +15,9 @@ use App\Http\Controllers\admin\CustomerController;
 use App\Http\Controllers\admin\ProfileController;
 use App\Http\Controllers\admin\SettingController;
 use App\Http\Controllers\admin\CurrencyController;
+use App\Http\Controllers\admin\TranslationController;
 use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\Log;
 
 Route::get('/', function () {
     return redirect('/home');
@@ -24,6 +26,7 @@ Route::get('/', function () {
 Route::get('lang/{locale}', function ($locale) {
     if (in_array($locale, ['en', 'kh'])) {
         session()->put('locale', $locale);
+        session()->save();
     }
     return redirect()->back();
 })->name('lang.switch');
@@ -41,7 +44,8 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('roles', RoleController::class);
         Route::resource('customers', CustomerController::class);
         Route::resource('currencies', CurrencyController::class);
-        
+        Route::resource('translations', TranslationController::class);
+
         // Profile Admin
         Route::get('profile', [ProfileController::class, 'index'])->name('profile.index');
         Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -49,7 +53,7 @@ Route::middleware(['auth'])->group(function () {
         // Settings
         Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
         Route::put('settings', [SettingController::class, 'update'])->name('settings.update');
-        
+
         // Income Reports
         Route::get('reports/income', [ReportController::class, 'income'])->name('reports.income');
         Route::get('reports/income/pdf', [ReportController::class, 'exportPdf'])->name('reports.income.pdf');
@@ -70,5 +74,3 @@ Route::middleware(['auth'])->group(function () {
         Route::post('kitchen/order/{order}/note', [KitchenController::class, 'updateNote'])->name('kitchen.update-note');
     });
 });
-
-
