@@ -5,18 +5,18 @@
     <!-- Top Header -->
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <div class="flex-grow-1">
-            <h2 class="fw-bold mb-0 responsive-h2" style="color: #1e293b;">Menu Item Details</h2>
-            <p class="text-muted small mb-0">Viewing information for "{{ $menuItem->name }}"</p>
+            <h2 class="fw-bold mb-0 responsive-h2" style="color: #1e293b;">{{ __('Menu Item Details') }}</h2>
+            <p class="text-muted small mb-0">{{ __('Viewing information for') }} "{{ $menuItem->name }}"</p>
         </div>
         <div class="d-flex gap-2 flex-shrink-0">
             <a href="{{ route('menu.edit', $menuItem->id) }}" class="btn btn-orange px-3 px-sm-4 py-2 d-flex align-items-center gap-2">
                 <i data-lucide="edit-3" style="width: 16px;"></i>
-                <span class="d-none d-sm-inline">Edit Item</span>
-                <span class="d-inline d-sm-none">Edit</span>
+                <span class="d-none d-sm-inline">{{ __('Edit Item') }}</span>
+                <span class="d-inline d-sm-none">{{ __('Edit') }}</span>
             </a>
             <a href="{{ route('menu.index') }}" class="btn btn-white border px-3 px-sm-4 py-2 d-flex align-items-center gap-2">
                 <i data-lucide="arrow-left" style="width: 16px;"></i>
-                Back
+                {{ __('Back') }}
             </a>
         </div>
     </div>
@@ -34,15 +34,15 @@
                     <!-- Stats List -->
                     <div class="item-stats-list">
                         <div class="d-flex justify-content-between align-items-center py-3 border-bottom">
-                            <span class="text-muted fw-bold extra-small text-uppercase">Status</span>
+                            <span class="text-muted fw-bold extra-small text-uppercase">{{ __('Status') }}</span>
                             <span class="badge-status {{ $menuItem->status == 'available' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }}">
-                                <span class="dot"></span> {{ ucfirst($menuItem->status) }}
+                                <span class="dot"></span> {{ $menuItem->status == 'available' ? __('Available') : __('Unavailable') }}
                             </span>
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center py-3 py-md-4">
-                            <span class="text-muted fw-bold extra-small text-uppercase">Price</span>
-                            <span class="price-hero">${{ number_format($menuItem->price, 2) }}</span>
+                            <span class="text-muted fw-bold extra-small text-uppercase">{{ __('Price') }}</span>
+                            <span class="price-hero">{{ $appSettings['currency'] }}{{ number_format($menuItem->price, 2) }}</span>
                         </div>
                     </div>
                 </div>
@@ -50,21 +50,21 @@
                 <!-- Right Information Column -->
                 <div class="col-lg-8">
                     <div class="item-info-header mb-4">
-                        <span class="info-label text-uppercase mb-1 d-block">Item Information</span>
+                        <span class="info-label text-uppercase mb-1 d-block">{{ __('Item Information') }}</span>
                         <h1 class="fw-bold mb-2 mb-md-4 responsive-title" style="color: #1e293b;">{{ $menuItem->name }}</h1>
                     </div>
 
                     <!-- Row: Category and ID -->
                     <div class="row g-3 mb-4">
                         <div class="col-md-7">
-                            <label class="info-label mb-2">Category :</label>
+                            <label class="info-label mb-2">{{ __('Category') }} :</label>
                             <div class="card-info-block p-3">
                                 <i data-lucide="tag" class="text-orange" style="width: 18px;"></i>
                                 <span class="fw-bold ms-2">{{ $menuItem->category->name }}</span>
                             </div>
                         </div>
                         <div class="col-md-5">
-                            <label class="info-label mb-2">Item Reference</label>
+                            <label class="info-label mb-2">{{ __('Item Reference') }}</label>
                             <div class="card-info-block p-3">
                                 <span class="fw-bold text-muted fs-4"># {{ $menuItem->id }}</span>
                             </div>
@@ -73,9 +73,9 @@
 
                     <!-- Description Block -->
                     <div class="mb-4 mb-md-5">
-                        <label class="info-label mb-2">Description :</label>
+                        <label class="info-label mb-2">{{ __('Description') }} :</label>
                         <div class="desc-content-box p-3 p-md-4 border rounded-lg shadow-sm text-break" style="word-wrap: break-word; overflow-wrap: break-word;">
-                            {{ $menuItem->description ?: 'No description available for this item.' }}
+                            {{ $menuItem->description ?: __('No description available for this item.') }}
                         </div>
                     </div>
 
@@ -83,20 +83,20 @@
                     <div class="row g-3">
                         <div class="col-sm-6 col-md-4">
                             <div class="metric-block created">
-                                <label>Created On</label>
+                                <label>{{ __('Created On') }}</label>
                                 <span>{{ $menuItem->created_at->format('M d, Y') }}</span>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-4">
                             <div class="metric-block update">
-                                <label>Last Update</label>
+                                <label>{{ __('Last Update') }}</label>
                                 <span>{{ $menuItem->updated_at->diffForHumans() }}</span>
                             </div>
                         </div>
                         <div class="col-12 col-md-4">
                             <div class="metric-block cat-status">
-                                <label>Cat. Status</label>
-                                <span><i data-lucide="check" style="width: 16px;"></i> Active</span>
+                                <label>{{ __('Cat. Status') }}</label>
+                                <span><i data-lucide="check" style="width: 16px;"></i> {{ __('Active') }}</span>
                             </div>
                         </div>
                     </div>

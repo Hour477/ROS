@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('phone')->after('role_id')->nullable();
             $table->string('address')->after('email')->nullable();
             $table->string('city')->after('address')->nullable();
-            $table->string('state')->after('city');
+            $table->string('state')->after('city')->nullable();
             $table->string('image')->after('state')->nullable();
             $table->softDeletes();
         });

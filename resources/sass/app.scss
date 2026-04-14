@@ -93,23 +93,26 @@ body {
 
 /* Branding Styles */
 .brand-logo-wrapper {
-    background: #fff;
-    width: 100px;
+    width: 200px;
     height: 100px;
     margin: 0 auto;
-    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    border: 4px solid #fff;
-    overflow: hidden;
+    transition: all 0.3s ease;
 }
 
 .brand-logo-wrapper img {
-    width: 80%;
-    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }
+
+
+
+
+
+
 
 .brand-title {
     font-size: 2.5rem;
@@ -143,13 +146,15 @@ body {
 }/* ToastMagic Styles */
 .toast-container {
     position: fixed;
-    top: 20px;
+    top: 90%;
     right: 20px;
     z-index: 9999;
 }
 
 .toast-magic {
-    background: #fff;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-radius: 12px;
     padding: 16px 24px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
@@ -587,4 +592,180 @@ body {
     width: 18px;
     height: 18px;
     stroke-width: 3px;
+}
+
+/* Command Palette Results */
+.command-result-item {
+    transition: all 0.2s ease;
+    border-left: 4px solid transparent;
+}
+
+.command-result-item:hover, 
+.command-result-item.selected {
+    background: #f8fafc;
+    border-left-color: var(--primary-color);
+}
+
+.command-result-item.selected {
+    background: #fff5eb;
+}
+
+.command-result-item .arrow {
+    transition: all 0.3s ease;
+    transform: translateX(-10px);
+}
+
+.command-result-item:hover .arrow,
+.command-result-item.selected .arrow {
+    opacity: 1 !important;
+    transform: translateX(0);
+}
+
+.extra-small {
+    font-size: 0.65rem;
+}
+
+.fw-black {
+    font-weight: 900 !important;
+}
+
+/* Navbar Search Button */
+.nav-search-btn {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 8px 16px;
+    min-width: 240px;
+    color: #64748b;
+    font-size: 0.85rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.nav-search-btn:hover {
+    background: #fff;
+    border-color: var(--primary-color);
+    box-shadow: 0 10px 15px -3px rgba(255, 140, 0, 0.1), 0 4px 6px -2px rgba(255, 140, 0, 0.05);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.kbd-shortcut {
+    font-size: 0.65rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    padding: 3px 6px;
+    border-radius: 6px;
+    color: #64748b;
+    font-weight: 700;
+    font-family: inherit;
+    box-shadow: 0 2px 0 #e2e8f0;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.nav-search-btn:hover .kbd-shortcut {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    box-shadow: 0 2px 0 rgba(255, 140, 0, 0.3);
+}
+
+/* Media Queries for Responsiveness */
+/* Media Queries for Responsiveness */
+@media (max-width: 991.98px) {
+    :root {
+        --sidebar-width: 280px;
+    }
+
+    .sidebar {
+        left: -100%;
+        transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 15px 0 40px rgba(0, 0, 0, 0.2);
+        width: var(--sidebar-width) !important;
+        padding: 25px 20px !important;
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    /* Force labels to show on mobile even if someone tried to collapse them */
+    .sidebar.active .brand span,
+    .sidebar.active .nav-link span,
+    .sidebar.active .nav-header {
+        display: block !important;
+    }
+
+    .sidebar.active .nav-link {
+        justify-content: flex-start !important;
+        padding: 12px 15px !important;
+        margin: 0 !important;
+    }
+
+    .sidebar.active .brand {
+        justify-content: flex-start !important;
+    }
+
+    .sidebar.active .brand img {
+        width: 45px !important;
+        height: 45px !important;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        width: 100%;
+    }
+
+    .admin-navbar {
+        padding: 0 15px;
+    }
+
+    .nav-search-btn {
+        min-width: unset;
+        width: 42px;
+        padding: 0;
+        justify-content: center;
+    }
+
+    .nav-search-btn span, 
+    .nav-search-btn .kbd-shortcut {
+        display: none;
+    }
+
+    .user-profile span {
+        display: none;
+    }
+    
+    .user-profile {
+        padding: 5px;
+        width: 42px;
+        height: 42px;
+        justify-content: center;
+    }
+
+    // Overlay for when sidebar is open on mobile
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(4px);
+        z-index: 950;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+}
+
+@media (min-width: 992px) {
+    .sidebar-overlay {
+        display: none !important;
+    }
 }

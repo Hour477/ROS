@@ -14,7 +14,7 @@ class KitchenController extends Controller
     {
         $status = $request->get('status', 'all');
 
-        $query = Order::with(['items.menuItem', 'diningTable', 'customer'])
+        $query = Order::with(['items.menuItem', 'diningTable', 'customer', 'payment'])
             ->whereIn('status', ['pending', 'preparing', 'ready']);
 
         if ($status === 'new') {

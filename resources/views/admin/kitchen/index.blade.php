@@ -1,19 +1,19 @@
 @extends('layouts.app')
 
-@section('title', 'Kitchen Display')
+@section('title', __('Kitchen Display'))
 
 @section('content')
 
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
     <div>
-        <h2 class="fw-black mb-0 text-dark">Kitchen Display System</h2>
-        <p class="text-muted small fw-bold mb-0 text-uppercase tracking-wider">Live Order Preparation Queue</p>
+        <h2 class="fw-black mb-0 text-dark">{{ __('Kitchen Display System') }}</h2>
+        <p class="text-muted small fw-bold mb-0 text-uppercase tracking-wider">{{ __('Live Order Preparation Queue') }}</p>
     </div>
     <div class="d-flex align-items-center gap-2">
         <div id="countdown" class="badge bg-white border text-primary px-3 py-2 rounded-lg shadow-sm fw-bold me-2">
-            Refreshing in 2mn
+            {{ __('Refreshing in 2mn') }}
         </div>
-        <button onclick="window.location.reload()" class="btn btn-white border shadow-sm rounded-lg p-2" title="Manual Refresh">
+        <button onclick="window.location.reload()" class="btn btn-white border shadow-sm rounded-lg p-2" title="{{ __('Manual Refresh') }}">
             <i data-lucide="rotate-ccw" style="width: 20px;"></i>
         </button>
     </div>
@@ -24,32 +24,32 @@
     <div class="d-flex gap-2">
         <a href="{{ route('kitchen.index', ['status' => 'all']) }}" class="btn kitchen-tab {{ $status === 'all' ? 'active' : '' }}">
             <i data-lucide="layout-grid" class="me-2"></i>
-            <span>ALL ACTIVE</span>
+            <span>{{ __('ALL ACTIVE') }}</span>
             <span class="badge {{ $status === 'all' ? 'bg-white text-dark' : 'bg-dark' }} ms-2">{{ $counts['all'] }}</span>
         </a>
         <a href="{{ route('kitchen.index', ['status' => 'new']) }}" class="btn kitchen-tab {{ $status === 'new' ? 'active' : '' }}">
             <i data-lucide="sparkles" class="me-2"></i>
-            <span>NEW (0-15M)</span>
+            <span>{{ __('NEW (0-15M)') }}</span>
             <span class="badge {{ $status === 'new' ? 'bg-white text-dark' : 'bg-dark' }} ms-2">{{ $counts['new'] }}</span>
         </a>
         <a href="{{ route('kitchen.index', ['status' => 'pending']) }}" class="btn kitchen-tab {{ $status === 'pending' ? 'active' : '' }}">
             <i data-lucide="clock" class="me-2"></i>
-            <span>PENDING</span>
+            <span>{{ __('PENDING') }}</span>
             <span class="badge {{ $status === 'pending' ? 'bg-white text-dark' : 'bg-dark' }} ms-2">{{ $counts['pending'] }}</span>
         </a>
         <a href="{{ route('kitchen.index', ['status' => 'preparing']) }}" class="btn kitchen-tab {{ $status === 'preparing' ? 'active' : '' }}">
             <i data-lucide="flame" class="me-2"></i>
-            <span>PREPARING</span>
+            <span>{{ __('PREPARING') }}</span>
             <span class="badge {{ $status === 'preparing' ? 'bg-white text-dark' : 'bg-dark' }} ms-2">{{ $counts['preparing'] }}</span>
         </a>
         <a href="{{ route('kitchen.index', ['status' => 'ready']) }}" class="btn kitchen-tab {{ $status === 'ready' ? 'active' : '' }}">
             <i data-lucide="bell" class="me-2"></i>
-            <span>READY</span>
+            <span>{{ __('READY') }}</span>
             <span class="badge {{ $status === 'ready' ? 'bg-white text-dark' : 'bg-dark' }} ms-2">{{ $counts['ready'] }}</span>
         </a>
         <a href="{{ route('kitchen.index', ['status' => 'late']) }}" class="btn kitchen-tab tab-late {{ $status === 'late' ? 'active' : '' }}">
             <i data-lucide="alert-triangle" class="me-2"></i>
-            <span>DELAYED (30M-1H)</span>
+            <span>{{ __('DELAYED (30M-1H)') }}</span>
             <span class="badge {{ $status === 'late' ? 'bg-white text-dark' : 'bg-danger' }} ms-2">{{ $counts['late'] }}</span>
         </a>
     </div>
@@ -63,8 +63,8 @@
                 <i data-lucide="check-circle-2" class="text-success" style="width: 64px; height: 64px;"></i>
             </div>
         </div>
-        <h3 class="fw-black text-dark">Kitchen Clear!</h3>
-        <p class="text-muted mb-0">No active orders currently pending. Great job!</p>
+        <h3 class="fw-black text-dark">{{ __('Kitchen Clear!') }}</h3>
+        <p class="text-muted mb-0">{{ __('No active orders currently pending. Great job!') }}</p>
     </div>
 </div>
 @else
@@ -75,9 +75,14 @@
             <!-- Card Header -->
             <div class="card-header border-0 p-3 d-flex justify-content-between align-items-center">
                 <div>
-                    <div class="h5 fw-black mb-0 text-white">#{{ $order->order_no }}</div>
+                    <div class="h5 fw-black mb-0 text-white">
+                        #{{ $order->order_no }}
+                        @if($order->payment)
+                            <span class="badge bg-success ms-1 small" style="font-size: 0.55rem; vertical-align: middle;">{{ __('PAID') }}</span>
+                        @endif
+                    </div>
                     <small class="text-white text-opacity-75 fw-bold text-uppercase" style="font-size: 0.65rem;">
-                        {{ $order->diningTable->name ?? 'Takeaway' }} • {{ $order->created_at->diffForHumans() }}
+                        {{ $order->diningTable->name ?? __('Takeaway') }} • {{ $order->created_at->diffForHumans() }}
                     </small>
                 </div>
                 @php
@@ -98,7 +103,7 @@
                 <div class="d-flex align-items-start gap-2">
                     <i data-lucide="info" class="text-warning-emphasis" style="width: 20px;"></i>
                     <div>
-                        <div class="fw-black text-dark text-uppercase extra-small mb-1">Customer Request:</div>
+                        <div class="fw-black text-dark text-uppercase extra-small mb-1">{{ __('Customer Request:') }}</div>
                         <div class="fw-bold text-dark h6 mb-0 small">{{ $order->notes }}</div>
                     </div>
                 </div>
@@ -129,7 +134,7 @@
                 <div class="d-flex gap-2 mb-2">
                     <button type="button" class="btn btn-outline-secondary btn-sm flex-grow-1 border-dashed" data-bs-toggle="modal" data-bs-target="#noteModal{{ $order->id }}">
                         <i data-lucide="message-square" style="width: 14px;" class="me-1"></i>
-                        {{ $order->notes ? 'Edit Note' : 'Add Note' }}
+                        {{ $order->notes ? __('Edit Note') : __('Add Note') }}
                     </button>
                 </div>
 
@@ -139,7 +144,7 @@
                     @method('PATCH')
                     <input type="hidden" name="status" value="preparing">
                     <button type="submit" class="btn btn-orange w-100 py-2 fw-black rounded-lg shadow-sm text-uppercase" style="font-size: 0.75rem;">
-                        Start Cooking
+                        {{ __('Start Cooking') }}
                     </button>
                 </form>
                 @elseif($order->status == 'preparing')
@@ -148,12 +153,12 @@
                     @method('PATCH')
                     <input type="hidden" name="status" value="ready">
                     <button type="submit" class="btn btn-success w-100 py-2 fw-black rounded-lg shadow-sm text-uppercase" style="font-size: 0.75rem;">
-                        Order Ready
+                        {{ __('Order Ready') }}
                     </button>
                 </form>
                 @else
                 <div class="text-center py-2 text-success fw-black text-uppercase" style="font-size: 0.8rem; letter-spacing: 1px;">
-                    <i data-lucide="check-circle" class="me-1"></i> Waiting for Pickup
+                    <i data-lucide="check-circle" class="me-1"></i> {{ __('Waiting for Pickup') }}
                 </div>
                 @endif
             </div>
@@ -167,16 +172,16 @@
                 <form action="{{ route('kitchen.update-note', $order->id) }}" method="POST">
                     @csrf
                     <div class="modal-header border-0 pb-0">
-                        <h5 class="fw-black mb-0">Order #{{ $order->order_no }} Note</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h5 class="fw-black mb-0">{{ __('Order') }} #{{ $order->order_no }} {{ __('Note') }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('Close') }}"></button>
                     </div>
                     <div class="modal-body p-4">
-                        <label class="extra-small fw-black text-muted text-uppercase mb-2 d-block">Kitchen Instructions / Customer Notes</label>
-                        <textarea name="notes" class="form-control premium-field" rows="4" placeholder="Type instructions here...">{{ $order->notes }}</textarea>
+                        <label class="extra-small fw-black text-muted text-uppercase mb-2 d-block">{{ __('Kitchen Instructions / Customer Notes') }}</label>
+                        <textarea name="notes" class="form-control premium-field" rows="4" placeholder="{{ __('Type instructions here...') }}">{{ $order->notes }}</textarea>
                     </div>
                     <div class="modal-footer border-0 p-4 pt-0">
-                        <button type="button" class="btn btn-light rounded-lg px-4" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-orange rounded-lg px-4">Save Note</button>
+                        <button type="button" class="btn btn-light rounded-lg px-4" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                        <button type="submit" class="btn btn-orange rounded-lg px-4">{{ __('Save Note') }}</button>
                     </div>
                 </form>
             </div>
@@ -374,10 +379,9 @@
             window.location.reload();
         } else {
             timeLeft--;
-            let mins = Math.floor(timeLeft / 60);
-            let secs = timeLeft % 60;
-            let display = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
-            if (countdownEl) countdownEl.innerText = `Refreshing in ${display}`;
+            let unit = mins > 0 ? "{{ __('m') }}" : "{{ __('s') }}";
+            let display = mins > 0 ? `${mins}${unit} ${secs}{{ __('s') }}` : `${secs}{{ __('s') }}`;
+            if (countdownEl) countdownEl.innerText = `{{ __('Refreshing in') }} ${display}`;
         }
     }, 1000);
 </script>

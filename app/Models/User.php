@@ -19,6 +19,23 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, SoftDeletes;
 
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role_id',
+        'phone',
+        'address',
+        'city',
+        'state',
+        'image',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
     protected $appends = ['display_image'];
 
     public function getDisplayImageAttribute()

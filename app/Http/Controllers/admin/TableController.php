@@ -50,7 +50,7 @@ class TableController extends Controller
 
         Table::create($request->all());
 
-        return redirect()->route('tables.index')->with('success', 'Table created successfully!');
+        return redirect()->route('tables.index')->with('success', __('Table created successfully!'));
     }
 
     /**
@@ -82,7 +82,7 @@ class TableController extends Controller
 
         $table->update($request->all());
 
-        return redirect()->route('tables.index')->with('success', 'Table updated successfully!');
+        return redirect()->route('tables.index')->with('success', __('Table updated successfully!'));
     }
 
     /**
@@ -92,6 +92,6 @@ class TableController extends Controller
     {
         $table->delete();
 
-        return redirect()->route('tables.index')->with('success', 'Table deleted successfully!');
+        return redirect()->route('tables.index')->with('success', __('Table deleted successfully!'));
     }
 }

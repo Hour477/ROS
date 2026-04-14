@@ -16,6 +16,7 @@
         <li class="nav-header">{{ __($section['header']) }}</li>
 
         @foreach($section['items'] as $item)
+        @if(!isset($item['visible']) || $item['visible'])
         <li class="nav-item">
             @if(isset($item['special']) && $item['special'] === 'logout')
             <a href="{{ route('logout') }}" class="nav-link {{ $item['class'] ?? '' }}"
@@ -27,10 +28,11 @@
             <a href="{{ route($item['route']) }}"
                 class="nav-link {{ request()->routeIs($item['activePattern']) ? 'active' : '' }} {{ $item['class'] ?? '' }}">
                 <i data-lucide="{{ $item['icon'] }}"></i>
-                <span>{{ __($item['label']) }}</span>
+                <span data-i18n="{{ $item['label'] }}">{{ __($item['label']) }}</span>
             </a>
             @endif
         </li>
+        @endif
         @endforeach
         @endif
         @endforeach

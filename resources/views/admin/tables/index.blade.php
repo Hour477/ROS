@@ -86,7 +86,7 @@
     <tr>
         <td colspan="5" class="text-center py-5">
             <i data-lucide="search-x" class="text-muted mb-3" style="width: 48px; height: 48px;"></i>
-            <p class="text-muted">No tables found matching your search.</p>
+            <p class="text-muted">{{ __('No tables found matching your search.') }}</p>
         </td>
     </tr>
     @endforelse

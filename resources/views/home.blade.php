@@ -10,11 +10,13 @@
             <h1 class="fw-black mb-1" style="color: #0f172a; letter-spacing: -1px;">{{ __('Dashboard Overview') }}</h1>
             <p class="text-muted fw-bold small text-uppercase mb-0 tracking-wider">{{ __('Welcome back') }}, {{ auth()->user()->name }} • {{ __('Managing Service for') }} {{ date('M d, Y') }}</p>
         </div>
+        @if(auth()->user()->role && in_array(auth()->user()->role->slug, ['admin', 'cashier']))
         <div class="d-flex gap-2">
             <a href="{{ route('orders.create') }}" class="btn btn-premium-action shadow-sm">
                 <i data-lucide="plus-circle" class="me-2"></i> {{ __('New Order') }}
             </a>
         </div>
+        @endif
     </div>
 
     <!-- Order Status Mosaic -->
@@ -86,9 +88,11 @@
                         </div>
                     </div>
                 </div>
+                @if(auth()->user()->role && in_array(auth()->user()->role->slug, ['admin', 'cashier']))
                 <div class="card-footer bg-light border-0 p-3 text-center">
                     <a href="{{ route('tables.index') }}" class="btn btn-sm btn-white border fw-bold text-uppercase px-3">Manage Tables</a>
                 </div>
+                @endif
             </div>
         </div>
 
@@ -100,7 +104,9 @@
                         <h5 class="fw-black mb-0">Live Service Queue</h5>
                         <p class="text-muted small mb-0">Most recent orders across all stations</p>
                     </div>
+                    @if(auth()->user()->role && in_array(auth()->user()->role->slug, ['admin', 'cashier']))
                     <a href="{{ route('orders.index') }}" class="btn btn-sm btn-outline-primary fw-black text-uppercase rounded-pill px-3">View All</a>
+                    @endif
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">

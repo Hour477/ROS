@@ -1,20 +1,20 @@
 @extends('layouts.app')
 
-@section('title', 'Menu Items')
+@section('title', __('Menu Items'))
 
 @section('content')
 <x-master-table
-    title="Menu Management"
-    subtitle="Coordinate your culinary collection and service availability"
+    title="{{ __('Menu Management') }}"
+    subtitle="{{ __('Coordinate your culinary collection and service availability') }}"
     :createRoute="route('menu.create')"
-    createLabel="Add New Item"
-    searchPlaceholder="Search by name or description..."
-    :headers="['#', 'Image', 'Name', 'Category', 'Price', 'Status', 'Actions']"
+    createLabel="{{ __('Add New Item') }}"
+    searchPlaceholder="{{ __('Search by name or description...') }}"
+    :headers="[__('#'), __('Image'), __('Name'), __('Category'), __('Price'), __('Status'), __('Actions')]"
     :items="$menuItems">
     <x-slot name="filters">
         <form action="{{ url()->current() }}" method="GET" class="d-flex gap-2 m-0 align-items-center">
             <select name="category" class="select2" onchange="this.form.submit()">
-                <option value="">All Categories</option>
+                <option value="">{{ __('All Categories') }}</option>
                 @foreach($categories as $category)
                 <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
                     {{ $category->name }}
@@ -22,7 +22,7 @@
                 @endforeach
             </select>
             @if(request()->anyFilled(['search', 'category']))
-            <a href="{{ route('menu.index') }}" class="btn btn-action reset" title="Clear Filters" style="width: 48px; height: 48px;">
+            <a href="{{ route('menu.index') }}" class="btn btn-action reset" title="{{ __('Clear Filters') }}" style="width: 48px; height: 48px;">
                 <i data-lucide="rotate-ccw" style="width: 20px;"></i>
             </a>
             @endif
@@ -49,20 +49,20 @@
         </td>
         <td class="text-center">
             @if($item->status == 'available')
-            <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">Available</span>
+            <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">{{ __('Available') }}</span>
             @else
-            <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill">Unavailable</span>
+            <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill">{{ __('Unavailable') }}</span>
             @endif
         </td>
         <td class="text-end pe-4">
             <div class="d-flex justify-content-end gap-2">
-                <a href="{{ route('menu.show', $item->id) }}" class="btn btn-action view" title="View Details">
+                <a href="{{ route('menu.show', $item->id) }}" class="btn btn-action view" title="{{ __('View Details') }}">
                     <i data-lucide="eye"></i>
                 </a>
-                <a href="{{ route('menu.edit', $item->id) }}" class="btn btn-action edit" title="Edit Item">
+                <a href="{{ route('menu.edit', $item->id) }}" class="btn btn-action edit" title="{{ __('Edit Item') }}">
                     <i data-lucide="edit-3"></i>
                 </a>
-                <button type="button" class="btn btn-action delete" title="Delete Item" onclick="confirmDelete('delete-form-{{ $item->id }}', '{{ $item->name }}')">
+                <button type="button" class="btn btn-action delete" title="{{ __('Delete Item') }}" onclick="confirmDelete('delete-form-{{ $item->id }}', '{{ $item->name }}')">
                     <i data-lucide="trash-2"></i>
                 </button>
                 <form id="delete-form-{{ $item->id }}" action="{{ route('menu.destroy', $item->id) }}" method="POST" class="d-none">
@@ -74,9 +74,9 @@
     </tr>
     @empty
     <tr>
-        <td colspan="6" class="text-center py-5">
+        <td colspan="7" class="text-center py-5">
             <i data-lucide="search-x" class="text-muted mb-3" style="width: 48px; height: 48px;"></i>
-            <p class="text-muted">No items match your criteria.</p>
+            <p class="text-muted">{{ __('No items match your criteria.') }}</p>
         </td>
     </tr>
     @endforelse

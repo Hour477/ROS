@@ -76,11 +76,35 @@
                                 <input type="password" name="password_confirmation" class="form-control premium-field"
                                     placeholder="Repeat new password">
                             </div>
+
+                            <hr class="my-4">
+                            <h6 class="fw-black text-dark text-uppercase mb-3"><i data-lucide="map-pin" class="me-2"></i> Location Information</h6>
+
+                            <div class="col-md-12">
+                                <label class="info-label mb-2">Street Address</label>
+                                <input type="text" name="address" class="form-control premium-field @error('address') is-invalid @enderror"
+                                    placeholder="Enter your street address" value="{{ old('address', $user->address) }}">
+                                @error('address') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="info-label mb-2">City</label>
+                                <input type="text" name="city" class="form-control premium-field @error('city') is-invalid @enderror"
+                                    placeholder="Enter city" value="{{ old('city', $user->city) }}">
+                                @error('city') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="info-label mb-2">State / Region</label>
+                                <input type="text" name="state" class="form-control premium-field @error('state') is-invalid @enderror"
+                                    placeholder="Enter state" value="{{ old('state', $user->state) }}">
+                                @error('state') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
                         </div>
 
                         <div class="mt-5 pt-4 border-top">
                             <button type="submit" class="btn btn-primary px-5 py-3 fw-black rounded-lg shadow-sm transform-active text-uppercase">
-                                <i data-lucide="shield-check" class="me-2"></i> Synchronize Profile Changes
+                                <i data-lucide="shield-check" class="me-2"></i> Save Profile Changes
                             </button>
                         </div>
                     </div>

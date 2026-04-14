@@ -62,7 +62,10 @@ class PaymentController extends Controller
             'paid_at' => now(),
         ]);
 
-        $order->update(['status' => 'completed']);
+        $order->update([
+            'status' => in_array($order->status, ['pending', 'preparing']) ? $order->status : 'completed',
+            'notes' => $request->notes ?? $order->notes
+        ]);
         
         session()->flash('success', 'Payment processed successfully!');
 

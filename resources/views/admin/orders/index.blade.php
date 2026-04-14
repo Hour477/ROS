@@ -4,12 +4,12 @@
 
 @section('content')
 <x-master-table 
-    title="Order Management" 
-    subtitle="Track and manage live customer orders and sales" 
+    title="{{ __('Order Management') }}" 
+    subtitle="{{ __('Track and manage live customer orders and sales') }}" 
     :createRoute="route('orders.create')" 
-    createLabel="New Order" 
-    searchPlaceholder="Search by Order ID..." 
-    :headers="['#', 'Order Details', 'Type', 'Amount', 'Status', 'Date', 'Actions']" 
+    createLabel="{{ __('New Order') }}" 
+    searchPlaceholder="{{ __('Search by Order ID...') }}" 
+    :headers="['#', __('Order Details'), __('Type'), __('Amount'), __('Status'), __('Date'), __('Actions')]" 
     :items="$orders"
 >
     <!-- Filter Slot -->
@@ -109,7 +109,7 @@
     <tr>
         <td colspan="7" class="text-center py-5">
             <i data-lucide="inbox" class="text-muted mb-3" style="width: 48px; height: 48px;"></i>
-            <p class="text-muted">No orders found.</p>
+            <p class="text-muted">{{ __('No orders found.') }}</p>
         </td>
     </tr>
     @endforelse

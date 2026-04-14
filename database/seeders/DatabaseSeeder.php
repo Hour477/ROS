@@ -16,49 +16,56 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Roles
-        $adminRole = \App\Models\Role::create([
-            'name' => 'Admin',
-            'slug' => 'admin',
-            'description' => 'System Administrator'
-        ]);
+        $adminRole = \App\Models\Role::firstOrCreate(
+            ['slug' => 'admin'],
+            ['name' => 'Admin', 'description' => 'System Administrator']
+        );
 
-        $cashierRole = \App\Models\Role::create([
-            'name' => 'Cashier',
-            'slug' => 'cashier',
-            'description' => 'Front desk staff'
-        ]);
+        $cashierRole = \App\Models\Role::firstOrCreate(
+            ['slug' => 'cashier'],
+            ['name' => 'Cashier', 'description' => 'Front desk staff']
+        );
 
         // Users
-        \App\Models\User::create([
-            'name' => 'Admin Staff',
-            'email' => 'admin@ros.com',
-            'password' => bcrypt('password'),
-            'role_id' => $adminRole->id,
-            'state' => 'Active'
-        ]);
+        \App\Models\User::updateOrCreate(
+            ['email' => 'admin@ros.com'],
+            [
+                'name' => 'Admin Staff',
+                'password' => bcrypt('password'),
+                'role_id' => $adminRole->id,
+                'state' => 'Active'
+            ]
+        );
 
-        // Categories
-        $drinks = \App\Models\Category::create(['name' => 'Drinks', 'description' => 'Cold and hot beverages']);
-        $food = \App\Models\Category::create(['name' => 'Food', 'description' => 'Main courses and snacks']);
-
-        // Menu Items
-        \App\Models\MenuItem::create([
-            'category_id' => $drinks->id,
-            'name' => 'Iced Latte',
-            'price' => 3.50,
-            'status' => 'available'
-        ]);
-
-        \App\Models\MenuItem::create([
-            'category_id' => $food->id,
-            'name' => 'Club Sandwich',
-            'price' => 5.00,
-            'status' => 'available'
+        // Categories & Menu Items
+        $this->call([
+            CategorySeeder::class,
+            MenuItemSeeder::class,
         ]);
 
         // Tables
-        \App\Models\Table::create(['name' => 'Table 1', 'capacity' => 2, 'status' => 'available']);
-        \App\Models\Table::create(['name' => 'Table 2', 'capacity' => 4, 'status' => 'available']);
-        \App\Models\Table::create(['name' => 'Table 3', 'capacity' => 6, 'status' => 'available']);
+        \App\Models\Table::firstOrCreate(['name' => 'Table 1'], ['capacity' => 2, 'status' => 'available']);
+        \App\Models\Table::firstOrCreate(['name' => 'Table 2'], ['capacity' => 4, 'status' => 'available']);
+        \App\Models\Table::firstOrCreate(['name' => 'Table 3'], ['capacity' => 6, 'status' => 'available']);
+
+        // Settings
+        $settings = [
+            'business_name' => 'The Grand Restaurant',
+            'business_email' => 'info@grandrest.com',
+            'business_phone' => '+855 012 345 678',
+            'business_address' => 'Phnom Penh, Cambodia',
+            'tax_percentage' => '10',
+            'currency_symbol' => '$',
+            'exchange_rate' => '4100', // 1 USD = 4100 KHR
+            'business_logo' => null,
+            'business_favicon' => null,
+        ];
+
+        foreach ($settings as $key => $value) {
+            \App\Models\Setting::updateOrCreate(['key' => $key], ['value' => $value]);
+        }
+
+        // Translations
+        $this->call(TranslationSeeder::class);
     }
 }

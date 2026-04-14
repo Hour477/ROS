@@ -118,7 +118,8 @@ class OrderController extends Controller
                 $total += $subtotal;
             }
 
-            $tax = $total * 0.1; // Example 10% tax
+            $taxRateSetting = \App\Helper\SystemHelper::getSetting('tax_percentage', 10) / 100;
+            $tax = $total * $taxRateSetting;
             $totalAmount = $total + $tax;
             $order->update([
                 'subtotal' => $total,

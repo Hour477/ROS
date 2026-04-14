@@ -5,17 +5,17 @@
     <!-- Header -->
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <div class="flex-grow-1">
-            <h2 class="fw-black mb-0 responsive-h2" style="color: #1e293b;">Transaction Details</h2>
-            <p class="text-muted small mb-0">Receipt #TXN-{{ str_pad($payment->id, 8, '0', STR_PAD_LEFT) }} • Processing Complete</p>
+            <h2 class="fw-black mb-0 responsive-h2" style="color: #1e293b;">{{ __('Transaction Details') }}</h2>
+            <p class="text-muted small mb-0">{{ __('Receipt') }} #TXN-{{ str_pad($payment->id, 8, '0', STR_PAD_LEFT) }} • {{ __('Processing Complete') }}</p>
         </div>
         <div class="d-flex gap-2 flex-shrink-0">
             <a href="{{ route('payments.index') }}" class="btn btn-white border px-4 py-2 d-flex align-items-center gap-2 rounded-lg shadow-sm">
                 <i data-lucide="arrow-left" style="width: 18px;"></i>
-                <span>Back to List</span>
+                <span>{{ __('Back to List') }}</span>
             </a>
             <button onclick="window.print()" class="btn btn-orange px-4 py-2 d-flex align-items-center gap-2 rounded-lg shadow-sm">
                 <i data-lucide="printer" style="width: 18px;"></i>
-                <span>Print Receipt</span>
+                <span>{{ __('Print Receipt') }}</span>
             </button>
         </div>
     </div>
@@ -31,13 +31,13 @@
                                 <i data-lucide="shopping-bag" style="width: 24px;"></i>
                             </div>
                             <div>
-                                <h5 class="fw-black mb-0">Order {{ $payment->order->order_no }}</h5>
-                                <small class="text-muted text-uppercase fw-bold">{{ $payment->order->order_type }}</small>
+                                <h5 class="fw-black mb-0">{{ __('Order') }} {{ $payment->order->order_no }}</h5>
+                                <small class="text-muted text-uppercase fw-bold">{{ __(ucfirst(str_replace('_', ' ', $payment->order->order_type))) }}</small>
                             </div>
                         </div>
                         <div class="text-end">
                             <div class="badge bg-success text-white px-3 py-2 rounded-pill h5 mb-0">
-                                <i data-lucide="check" class="me-1"></i> PAID
+                                <i data-lucide="check" class="me-1"></i> {{ __('PAID') }}
                             </div>
                         </div>
                     </div>
@@ -46,10 +46,10 @@
                     <table class="table table-borderless align-middle mb-5">
                         <thead class="bg-light rounded-lg">
                             <tr>
-                                <th class="p-3 text-muted extra-small text-uppercase">Menu Item</th>
-                                <th class="p-3 text-muted extra-small text-uppercase text-center">Unit Price</th>
-                                <th class="p-3 text-muted extra-small text-uppercase text-center">Qty</th>
-                                <th class="p-3 text-muted extra-small text-uppercase text-end">Subtotal</th>
+                                <th class="p-3 text-muted extra-small text-uppercase">{{ __('Menu Item') }}</th>
+                                <th class="p-3 text-muted extra-small text-uppercase text-center">{{ __('Unit Price') }}</th>
+                                <th class="p-3 text-muted extra-small text-uppercase text-center">{{ __('Qty') }}</th>
+                                <th class="p-3 text-muted extra-small text-uppercase text-end">{{ __('Subtotal') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -77,15 +77,15 @@
                     <div class="row justify-content-end mt-4">
                         <div class="col-md-5">
                             <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted fw-bold">Subtotal</span>
+                                <span class="text-muted fw-bold">{{ __('Subtotal') }}</span>
                                 <span class="text-dark fw-bold">${{ number_format($payment->order->subtotal, 2) }}</span>
                             </div>
                             <div class="d-flex justify-content-between mb-2 pb-3 border-bottom">
-                                <span class="text-muted fw-bold">Tax (10%)</span>
+                                <span class="text-muted fw-bold">{{ __('Tax') }} ({{ $appSettings['tax_percentage'] }}%)</span>
                                 <span class="text-dark fw-bold">${{ number_format($payment->order->tax, 2) }}</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center pt-2">
-                                <span class="h4 fw-black mb-0">Total Due</span>
+                                <span class="h4 fw-black mb-0">{{ __('Total Due') }}</span>
                                 <span class="h3 fw-black text-primary mb-0">${{ number_format($payment->order->total_amount, 2) }}</span>
                             </div>
                         </div>
@@ -97,7 +97,7 @@
         <!-- Meta Sidebar -->
         <div class="col-lg-4">
             <div class="item-info-header mb-3">
-                <span class="info-label text-uppercase mb-1 d-block">Transaction Info</span>
+                <span class="info-label text-uppercase mb-1 d-block">{{ __('Transaction Info') }}</span>
             </div>
             
             <div class="card border-0 shadow-sm rounded-lg mb-4">
@@ -105,40 +105,40 @@
                     <div class="payment-method-tile d-flex align-items-center gap-3 p-3 bg-light rounded-lg border mb-4">
                         @php
                             $methods = [
-                                'cash' => ['icon' => 'banknote', 'label' => 'CASH PAYMENT'],
-                                'card' => ['icon' => 'credit-card', 'label' => 'CARD PAYMENT'],
-                                'qr' => ['icon' => 'qr-code', 'label' => 'QR SCAN'],
-                                'khqr' => ['icon' => 'qr-code', 'label' => 'KHQR SCAN'],
+                                'cash' => ['icon' => 'banknote', 'label' => __('CASH PAYMENT')],
+                                'card' => ['icon' => 'credit-card', 'label' => __('CARD PAYMENT')],
+                                'qr' => ['icon' => 'qr-code', 'label' => __('QR SCAN')],
+                                'khqr' => ['icon' => 'qr-code', 'label' => __('KHQR SCAN')],
                             ];
-                            $method = $methods[$payment->payment_method] ?? ['icon' => 'help-circle', 'label' => 'UNKNOWN'];
+                            $method = $methods[$payment->payment_method] ?? ['icon' => 'help-circle', 'label' => __('UNKNOWN')];
                         @endphp
                         <div class="bg-white p-2 rounded shadow-sm">
                             <i data-lucide="{{ $method['icon'] }}" class="text-primary" style="width: 28px; height: 28px;"></i>
                         </div>
                         <div>
-                            <div class="extra-small text-muted fw-bold">Method</div>
+                            <div class="extra-small text-muted fw-bold">{{ __('Method') }}</div>
                             <div class="fw-black h6 mb-0">{{ $method['label'] }}</div>
                         </div>
                     </div>
 
                     <div class="meta-row d-flex justify-content-between py-3 border-bottom">
-                        <span class="text-muted small fw-bold">Cash Received</span>
+                        <span class="text-muted small fw-bold">{{ __('Cash Received') }}</span>
                         <span class="text-dark fw-bold h6 mb-0">${{ number_format($payment->paid_amount, 2) }}</span>
                     </div>
                     <div class="meta-row d-flex justify-content-between py-3 border-bottom">
-                        <span class="text-muted small fw-bold">Change Returned</span>
+                        <span class="text-muted small fw-bold">{{ __('Change Returned') }}</span>
                         <span class="text-success fw-black h6 mb-0">${{ number_format($payment->change_amount, 2) }}</span>
                     </div>
                     <div class="meta-row d-flex justify-content-between py-3 mb-4">
-                        <span class="text-muted small fw-bold">Received Date</span>
-                        <span class="text-dark small fw-bold">{{ $payment->paid_at ? $payment->paid_at->format('M d, Y • h:i') : 'N/A' }}</span>
+                        <span class="text-muted small fw-bold">{{ __('Received Date') }}</span>
+                        <span class="text-dark small fw-bold">{{ $payment->paid_at ? $payment->paid_at->format('M d, Y • h:i') : __('N/A') }}</span>
                     </div>
 
                     <div class="p-3 bg-primary-subtle text-primary rounded-lg border border-primary border-opacity-25 d-flex align-items-center gap-3">
                         <i data-lucide="user" style="width: 20px;"></i>
                         <div>
-                            <small class="d-block extra-small text-uppercase fw-black">Processed By</small>
-                            <span class="fw-bold">{{ $payment->order->user->name ?? 'System' }}</span>
+                            <small class="d-block extra-small text-uppercase fw-black">{{ __('Processed By') }}</small>
+                            <span class="fw-bold">{{ $payment->order->user->name ?? __('System') }}</span>
                         </div>
                     </div>
                 </div>
@@ -151,7 +151,7 @@
                         <i data-lucide="users" style="width: 24px;"></i>
                     </div>
                     <div>
-                        <div class="extra-small text-muted fw-bold text-uppercase">Customer Info</div>
+                        <div class="extra-small text-muted fw-bold text-uppercase">{{ __('Customer Info') }}</div>
                         <div class="fw-black text-dark">{{ $payment->order->customer->name }}</div>
                         <small class="text-muted">{{ $payment->order->customer->phone }}</small>
                     </div>

@@ -5,14 +5,14 @@
     <!-- Header -->
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <div class="flex-grow-1">
-            <h2 class="fw-bold mb-0 responsive-h2" style="color: #1e293b;">New Category</h2>
-            <p class="text-muted small mb-0">Define a new structural group for your restaurant menu</p>
+            <h2 class="fw-bold mb-0 responsive-h2" style="color: #1e293b;">{{ __('New Category') }}</h2>
+            <p class="text-muted small mb-0">{{ __('Define a new structural group for your restaurant menu') }}</p>
         </div>
         <div class="d-flex gap-2 flex-shrink-0">
             <a href="{{ route('categories.index') }}" class="btn btn-white border px-3 px-sm-4 py-2 d-flex align-items-center gap-2">
                 <i data-lucide="arrow-left" style="width: 16px;"></i>
-                <span class="d-none d-sm-inline">Back to List</span>
-                <span class="d-inline d-sm-none">Back</span>
+                <span class="d-none d-sm-inline">{{ __('Back to List') }}</span>
+                <span class="d-inline d-sm-none">{{ __('Back') }}</span>
             </a>
         </div>
     </div>
@@ -26,21 +26,21 @@
                     <!-- Right Information Column -->
                     <div class="col-lg-8">
                         <div class="item-info-header mb-4">
-                            <span class="info-label text-uppercase mb-1 d-block">Essential Metadata</span>
-                            <h3 class="fw-bold" style="color: #1e293b;">Category Details</h3>
+                            <span class="info-label text-uppercase mb-1 d-block">{{ __('Essential Metadata') }}</span>
+                            <h3 class="fw-bold" style="color: #1e293b;">{{ __('Category Details') }}</h3>
                         </div>
 
                         <!-- Input: Name -->
                         <div class="mb-4">
-                            <label class="info-label mb-2">Category Name :</label>
-                            <input type="text" name="name" class="form-control premium-field @error('name') is-invalid @enderror" value="{{ old('name') }}" placeholder="e.g. Italian Specialties" required>
+                            <label class="info-label mb-2">{{ __('Category Name') }} :</label>
+                            <input type="text" name="name" class="form-control premium-field @error('name') is-invalid @enderror" value="{{ old('name') }}" placeholder="{{ __('e.g. Italian Specialties') }}" required>
                             @error('name') <div class="invalid-feedback fw-bold">{{ $message }}</div> @enderror
                         </div>
 
                         <!-- Description -->
                         <div class="mb-4 mb-md-5">
-                            <label class="info-label mb-2">Detailed Description :</label>
-                            <textarea name="description" class="form-control premium-field @error('description') is-invalid @enderror" rows="5" placeholder="Briefly describe what items fall under this category...">{{ old('description') }}</textarea>
+                            <label class="info-label mb-2">{{ __('Detailed Description') }} :</label>
+                            <textarea name="description" class="form-control premium-field @error('description') is-invalid @enderror" rows="5" placeholder="{{ __('Briefly describe what items fall under this category...') }}">{{ old('description') }}</textarea>
                             @error('description') <div class="invalid-feedback fw-bold">{{ $message }}</div> @enderror
                         </div>
 
@@ -48,11 +48,11 @@
                         <div class="d-flex flex-wrap gap-2 pt-3 border-top justify-content-end">
                             <button type="submit" class="btn btn-orange px-4 py-3 d-flex align-items-center gap-2 shadow-sm">
                                 <i data-lucide="plus-circle" style="width: 20px;"></i>
-                                <span class="fw-bold">Create Category</span>
+                                <span class="fw-bold">{{ __('Create Category') }}</span>
                             </button>
                             <a href="{{ route('categories.index') }}" class="btn btn-white border px-4 py-3 d-flex align-items-center gap-2 shadow-sm">
                                 <i data-lucide="x" style="width: 20px;"></i>
-                                <span class="fw-bold">Cancel</span>
+                                <span class="fw-bold">{{ __('Cancel') }}</span>
                             </a>
                         </div>
                     </div>
@@ -60,17 +60,17 @@
                     <!-- Sidebar column for Status -->
                     <div class="col-lg-4">
                         <div class="item-info-header mb-3">
-                            <span class="info-label text-uppercase mb-1 d-block">Management</span>
+                            <span class="info-label text-uppercase mb-1 d-block">{{ __('Management') }}</span>
                         </div>
                         
                         <div class="p-4 bg-light rounded-lg border border-dashed mb-4">
                             <i data-lucide="info" class="text-primary mb-2" style="width: 20px;"></i>
-                            <p class="extra-small text-muted mb-0">Items belonging to a disabled category will automatically be hidden from the menu grid.</p>
+                            <p class="extra-small text-muted mb-0">{{ __('Items belonging to a disabled category will automatically be hidden from the menu grid.') }}</p>
                         </div>
 
                         <div class="item-stats-list">
                             <div class="d-flex justify-content-between align-items-center py-3 border-bottom">
-                                <span class="text-muted fw-bold extra-small text-uppercase">Initial Visibility</span>
+                                <span class="text-muted fw-bold extra-small text-uppercase">{{ __('Initial Visibility') }}</span>
                                 <div class="form-check form-switch p-0 m-0">
                                     <input class="form-check-input premium-switch" type="checkbox" name="status" value="1" id="statusSwitch" checked>
                                     <input type="hidden" name="status" id="statusHidden" value="0" disabled>
@@ -78,7 +78,7 @@
                             </div>
                             <div class="py-2">
                                 <span id="statusBadge" class="badge-status bg-success-subtle text-success justify-content-center w-100 mt-2">
-                                    <span class="dot"></span> Active & Visible
+                                    <span class="dot"></span> {{ __('Active & Visible') }}
                                 </span>
                             </div>
                         </div>

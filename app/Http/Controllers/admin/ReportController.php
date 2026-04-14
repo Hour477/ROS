@@ -15,8 +15,26 @@ class ReportController extends Controller
 {
     public function income(Request $request)
     {
-        $startDate = $request->get('start_date', now()->startOfMonth()->format('Y-m-d'));
+        $period = $request->get('period', '');
+        
+        $startDate = $request->get('start_date');
         $endDate = $request->get('end_date', now()->format('Y-m-d'));
+
+        if ($period == 'today') {
+            $startDate = now()->format('Y-m-d');
+            $endDate = now()->format('Y-m-d');
+        } elseif ($period == 'weekly') {
+            $startDate = now()->startOfWeek()->format('Y-m-d');
+            $endDate = now()->format('Y-m-d');
+        } elseif ($period == 'monthly') {
+            $startDate = now()->startOfMonth()->format('Y-m-d');
+            $endDate = now()->format('Y-m-d');
+        }
+
+        // Default if everything is empty
+        if (!$startDate) {
+            $startDate = now()->startOfMonth()->format('Y-m-d');
+        }
 
         $baseQuery = Payment::with(['order.customer'])
             ->whereBetween('paid_at', [
@@ -43,17 +61,105 @@ class ReportController extends Controller
         // Paginate only for the table
         $payments = $baseQuery->latest()->paginate(10);
 
-        // Daily Trend for Chart
-        $trend = Payment::whereBetween('paid_at', [
-                Carbon::parse($startDate)->startOfDay(),
-                Carbon::parse($endDate)->endOfDay()
-            ])
-            ->select(DB::raw('DATE(paid_at) as date'), DB::raw('SUM(total_amount) as total'))
-            ->groupBy('date')
-            ->orderBy('date')
+        // Chart Trend Calculation
+        if ($period == 'today') {
+            // Get actual sales data by hour
+            $salesByHour = Payment::whereDate('paid_at', now()->toDateString())
+                ->select(DB::raw("HOUR(paid_at) as hour_key"), DB::raw('SUM(total_amount) as total'))
+                ->groupBy('hour_key')
+                ->pluck('total', 'hour_key')
+                ->toArray();
+
+            // Generate full 24-hour trend array
+            $chartTrendData = [];
+            for ($h = 0; $h < 24; $h++) {
+                $hourLabel = \Carbon\Carbon::createFromTime($h, 0)->format('h A'); // e.g. 09 AM
+                $chartTrendData[] = (object)[
+                    'label' => $hourLabel,
+                    'total' => $salesByHour[$h] ?? 0
+                ];
+            }
+            $chartTrend = collect($chartTrendData);
+        } elseif ($period == 'weekly') {
+            // Get last 7 days sales data
+            $startDate = now()->subDays(6)->startOfDay();
+            $endDate = now()->endOfDay();
+
+            $salesByDay = Payment::whereBetween('paid_at', [$startDate, $endDate])
+                ->select(DB::raw("DATE(paid_at) as date_key"), DB::raw('SUM(total_amount) as total'))
+                ->groupBy('date_key')
+                ->pluck('total', 'date_key')
+                ->toArray();
+
+            $chartTrendData = [];
+            for ($i = 6; $i >= 0; $i--) {
+                $date = now()->subDays($i);
+                $dateKey = $date->toDateString();
+                $chartTrendData[] = (object)[
+                    'label' => $date->format('d M'), // e.g. 13 Apr
+                    'total' => $salesByDay[$dateKey] ?? 0
+                ];
+            }
+            $chartTrend = collect($chartTrendData);
+        } elseif ($period == 'monthly') {
+            // Get all days in the current month
+            $startDate = now()->startOfMonth();
+            $endDate = now()->endOfMonth();
+            $daysInMonth = now()->daysInMonth;
+
+            $salesByDay = Payment::whereBetween('paid_at', [$startDate, $endDate])
+                ->select(DB::raw("DATE(paid_at) as date_key"), DB::raw('SUM(total_amount) as total'))
+                ->groupBy('date_key')
+                ->pluck('total', 'date_key')
+                ->toArray();
+
+            $chartTrendData = [];
+            for ($d = 1; $d <= $daysInMonth; $d++) {
+                $date = now()->day($d);
+                $dateKey = $date->toDateString();
+                $chartTrendData[] = (object)[
+                    'label' => $date->format('d M'), // e.g. 01 Apr
+                    'total' => $salesByDay[$dateKey] ?? 0
+                ];
+            }
+            $chartTrend = collect($chartTrendData);
+        } else {
+            // Daily Trend for other periods (Monthly or Custom)
+            $chartTrend = Payment::whereBetween('paid_at', [
+                    Carbon::parse($startDate)->startOfDay(),
+                    Carbon::parse($endDate)->endOfDay()
+                ])
+                ->select(DB::raw("DATE_FORMAT(paid_at, '%d %b') as label"), DB::raw('SUM(total_amount) as total'))
+                ->groupBy('label', DB::raw('DATE(paid_at)'))
+                ->orderBy(DB::raw('DATE(paid_at)'))
+                ->get();
+        }
+
+        // Monthly Trend (Last 12 Months) - Always available for "Yearly/Overview" if needed
+        $monthlyTrend = Payment::select(
+                DB::raw("DATE_FORMAT(paid_at, '%Y-%c') as month_key"),
+                DB::raw("DATE_FORMAT(paid_at, '%b %Y') as label"),
+                DB::raw('SUM(total_amount) as total')
+            )
+            ->where('paid_at', '>=', now()->subMonths(11)->startOfMonth())
+            ->groupBy('month_key', 'label')
+            ->orderBy(DB::raw("MIN(paid_at)"))
             ->get();
 
-        return view('admin.reports.income', compact('payments', 'stats', 'startDate', 'endDate', 'trend'));
+        // Decide which trend to use for the main chart
+        // If no period is selected (Custom range) and range > 60 days, use monthly. 
+        // Otherwise use the calculated chartTrend.
+        $daysDiff = Carbon::parse($startDate)->diffInDays(Carbon::parse($endDate));
+        $mainTrend = ($daysDiff > 60 && !$period) ? $monthlyTrend : $chartTrend;
+
+        return view('admin.reports.income', [
+            'payments' => $payments,
+            'stats' => $stats,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'mainTrend' => $mainTrend,
+            'monthlyTrend' => $monthlyTrend,
+        ]);
     }
 
     public function exportExcel(Request $request)

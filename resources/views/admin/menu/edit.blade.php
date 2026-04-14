@@ -5,14 +5,14 @@
     <!-- Sophisticated Header -->
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <div class="flex-grow-1">
-            <h2 class="fw-bold mb-0 responsive-h2" style="color: #1e293b;">Edit Menu Item</h2>
-            <p class="text-muted small mb-0">Refining the specifications for <strong class="text-dark">"{{ $menuItem->name }}"</strong></p>
+            <h2 class="fw-bold mb-0 responsive-h2" style="color: #1e293b;">{{ __('Edit Menu Item') }}</h2>
+            <p class="text-muted small mb-0">{{ __('Refining the specifications for') }} <strong class="text-dark">"{{ $menuItem->name }}"</strong></p>
         </div>
         <div class="d-flex gap-2 flex-shrink-0">
             <a href="{{ route('menu.index') }}" class="btn btn-white border px-3 px-sm-4 py-2 d-flex align-items-center gap-2">
                 <i data-lucide="arrow-left" style="width: 16px;"></i>
-                <span class="d-none d-sm-inline">Back to Menu</span>
-                <span class="d-inline d-sm-none">Back</span>
+                <span class="d-none d-sm-inline">{{ __('Back to Menu') }}</span>
+                <span class="d-inline d-sm-none">{{ __('Back') }}</span>
             </a>
         </div>
     </div>
@@ -27,7 +27,7 @@
                     <!-- Left Sidebar Column -->
                     <div class="col-lg-4">
                         <div class="item-info-header mb-3">
-                            <span class="info-label text-uppercase mb-1 d-block">Visual Presentation</span>
+                            <span class="info-label text-uppercase mb-1 d-block">{{ __('VISUAL PRESENTATION') }}</span>
                         </div>
                         
                         <div class="image-container mb-4">
@@ -36,12 +36,12 @@
                                     <img src="{{ asset('storage/' . $menuItem->image) }}" id="imagePreview" alt="Preview" class="w-100 h-100 object-fit-cover">
                                     <div id="placeholderOverlay" class="text-center p-4 d-none">
                                         <i data-lucide="image-plus" class="text-muted mb-2" style="width: 48px; height: 48px; opacity: 0.5;"></i>
-                                        <p class="small text-muted fw-bold mb-0">Tap to change portrait</p>
+                                        <p class="small text-muted fw-bold mb-0">{{ __('Tap to change portrait') }}</p>
                                     </div>
                                 @else
                                     <div id="placeholderOverlay" class="text-center p-4">
                                         <i data-lucide="image-plus" class="text-muted mb-2" style="width: 48px; height: 48px; opacity: 0.5;"></i>
-                                        <p class="small text-muted fw-bold mb-0">Tap to upload portrait</p>
+                                        <p class="small text-muted fw-bold mb-0">{{ __('Tap to upload portrait') }}</p>
                                     </div>
                                     <img src="" id="imagePreview" alt="Preview" class="d-none w-100 h-100 object-fit-cover">
                                 @endif
@@ -53,7 +53,7 @@
                         <!-- Status List -->
                         <div class="item-stats-list">
                             <div class="d-flex justify-content-between align-items-center py-3 border-bottom">
-                                <span class="text-muted fw-bold extra-small text-uppercase">Current Status</span>
+                                <span class="text-muted fw-bold extra-small text-uppercase">{{ __('CURRENT STATUS') }}</span>
                                 <div class="form-check form-switch p-0 m-0">
                                     <input class="form-check-input premium-switch" type="checkbox" name="status" value="available" id="statusSwitch" {{ old('status', $menuItem->status) == 'available' ? 'checked' : '' }}>
                                 </div>
@@ -62,7 +62,7 @@
                             <div class="py-2">
                                 @php $isAvailable = old('status', $menuItem->status) == 'available'; @endphp
                                 <span id="statusBadge" class="badge-status {{ $isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }} justify-content-center w-100 mt-2">
-                                    <span class="dot"></span> {{ $isAvailable ? 'Available for Ordering' : 'Hidden from Menu' }}
+                                    <span class="dot"></span> {{ $isAvailable ? __('Available for Ordering') : __('Hidden from Menu') }}
                                 </span>
                             </div>
                         </div>
@@ -73,21 +73,21 @@
                     <!-- Right Information Column -->
                     <div class="col-lg-8">
                         <div class="item-info-header mb-4">
-                            <span class="info-label text-uppercase mb-1 d-block">Essential Specifications</span>
-                            <h3 class="fw-bold" style="color: #1e293b;">Item Details</h3>
+                            <span class="info-label text-uppercase mb-1 d-block">{{ __('ESSENTIAL SPECIFICATIONS') }}</span>
+                            <h3 class="fw-bold" style="color: #1e293b;">{{ __('Item Details') }}</h3>
                         </div>
 
                         <!-- Input: Name -->
                         <div class="mb-4">
-                            <label class="info-label mb-2">Item Name :</label>
-                            <input type="text" name="name" class="form-control premium-field @error('name') is-invalid @enderror" value="{{ old('name', $menuItem->name) }}" placeholder="e.g. Signature Truffle Pasta" required>
+                            <label class="info-label mb-2">{{ __('ITEM NAME :') }}</label>
+                            <input type="text" name="name" class="form-control premium-field @error('name') is-invalid @enderror" value="{{ old('name', $menuItem->name) }}" placeholder="{{ __('e.g. Signature Truffle Pasta') }}" required>
                             @error('name') <div class="invalid-feedback fw-bold">{{ $message }}</div> @enderror
                         </div>
 
                         <!-- Row: Category and Price -->
                         <div class="row g-3 mb-4">
                             <div class="col-md-7">
-                                <label class="info-label mb-2">Category Assignment :</label>
+                                <label class="info-label mb-2">{{ __('CATEGORY ASSIGNMENT :') }}</label>
                                 <select name="category_id" class="form-select premium-field select2 @error('category_id') is-invalid @enderror" required>
                                     @foreach($categories as $category)
                                         <option value="{{ $category->id }}" {{ old('category_id', $menuItem->category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
@@ -96,7 +96,7 @@
                                 @error('category_id') <div class="invalid-feedback fw-bold">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-5">
-                                <label class="info-label mb-2">Price ({{ $appSettings['currency'] }}) :</label>
+                                <label class="info-label mb-2">{{ __('PRICE ($) :') }}</label>
                                 <div class="input-group premium-group shadow-sm">
                                     <span class="input-group-text bg-white text-muted px-3 fw-bold" style="color: #f08913;">
                                         {{ $appSettings['currency'] }}
@@ -109,8 +109,8 @@
 
                         <!-- Description Block -->
                         <div class="mb-4 mb-md-5">
-                            <label class="info-label mb-2">Culinary Description :</label>
-                            <textarea name="description" class="form-control premium-field @error('description') is-invalid @enderror" rows="6" placeholder="Describe the flavors, core ingredients, and artistic presentation...">{{ old('description', $menuItem->description) }}</textarea>
+                            <label class="info-label mb-2">{{ __('CULINARY DESCRIPTION :') }}</label>
+                            <textarea name="description" class="form-control premium-field @error('description') is-invalid @enderror" rows="6" placeholder="{{ __('Describe the flavors, core ingredients, and artistic presentation...') }}">{{ old('description', $menuItem->description) }}</textarea>
                             @error('description') <div class="invalid-feedback fw-bold">{{ $message }}</div> @enderror
                         </div>
 
@@ -118,11 +118,11 @@
                         <div class="d-flex flex-wrap gap-2 pt-3 border-top justify-content-end">
                             <button type="submit" class="btn btn-orange px-4 py-3 d-flex align-items-center gap-2 shadow-sm">
                                 <i data-lucide="refresh-cw" style="width: 20px;"></i>
-                                <span class="fw-bold">Update</span>
+                                <span class="fw-bold">{{ __('Update') }}</span>
                             </button>
                             <a href="{{ route('menu.index') }}" class="btn btn-white border px-4 py-3 d-flex align-items-center gap-2 shadow-sm">
                                 <i data-lucide="x" style="width: 20px;"></i>
-                                <span class="fw-bold">Cancel</span>
+                                <span class="fw-bold">{{ __('Cancel') }}</span>
                             </a>
                         </div>
                     </div>
@@ -226,10 +226,10 @@
         const badge = document.getElementById('statusBadge');
         if (this.checked) {
             badge.className = 'badge-status bg-success-subtle text-success justify-content-center w-100 mt-2';
-            badge.innerHTML = '<span class="dot"></span> Available for Ordering';
+            badge.innerHTML = '<span class="dot"></span> {{ __('Available for Ordering') }}';
         } else {
             badge.className = 'badge-status bg-danger-subtle text-danger justify-content-center w-100 mt-2';
-            badge.innerHTML = '<span class="dot"></span> Hidden from Menu';
+            badge.innerHTML = '<span class="dot"></span> {{ __('Hidden from Menu') }}';
         }
         document.getElementById('statusHidden').disabled = this.checked;
     };

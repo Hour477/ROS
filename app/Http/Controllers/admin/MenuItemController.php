@@ -62,7 +62,7 @@ class MenuItemController extends Controller
 
         MenuItem::create($request->except('image') + ['image' => $image]);
 
-        return redirect()->route('menu.index')->with('success', 'Menu Item created successfully!');
+        return redirect()->route('menu.index')->with('success', __('Menu Item created successfully!'));
     }
 
     /**
@@ -103,7 +103,7 @@ class MenuItemController extends Controller
 
         $menu->update(array_merge($request->except('image'), ['image' => $image]));
 
-        return redirect()->route('menu.index')->with('success', 'Menu Item updated successfully!');
+        return redirect()->route('menu.index')->with('success', __('Menu Item updated successfully!'));
     }
 
     /**
@@ -116,6 +116,6 @@ class MenuItemController extends Controller
         }
         $menu->delete();
 
-        return redirect()->route('menu.index')->with('success', 'Menu Item deleted successfully!');
+        return redirect()->route('menu.index')->with('success', __('Menu Item deleted successfully!'));
     }
 }

@@ -6,6 +6,8 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Models\MenuItem;
 use App\Models\Table;
+use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -53,4 +55,5 @@ class HomeController extends Controller
             'activeTables'
         ));
     }
+
 }

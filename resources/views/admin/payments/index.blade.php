@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Payments History')
+@section('title', __('Payments History'))
 
 @section('content')
 <x-master-table 
-    title="Payment History" 
-    subtitle="Track all financial transactions and payment receipts" 
+    title="{{ __('Payment History') }}" 
+    subtitle="{{ __('Track all financial transactions and payment receipts') }}" 
     createRoute="" 
     createLabel="" 
-    searchPlaceholder="Search order number..." 
-    :headers="['#', 'Transaction Details', 'Order Ref', 'Method', 'Status', 'Actions']" 
+    searchPlaceholder="{{ __('Search order number...') }}" 
+    :headers="['#', __('Transaction Details'), __('Order Ref'), __('Method'), __('Status'), __('Actions')]" 
     :items="$payments"
 >
     @forelse($payments as $payment)
@@ -45,13 +45,13 @@
             @endphp
             <span class="badge {{ $method['class'] }} px-3 py-2 rounded-pill d-inline-flex align-items-center gap-2">
                 <i data-lucide="{{ $method['icon'] }}" style="width: 14px;"></i>
-                {{ strtoupper($payment->payment_method) }}
+                {{ __(strtoupper($payment->payment_method)) }}
             </span>
         </td>
         <td class="text-center">
             <span class="badge bg-success text-white px-3 py-2 rounded-pill d-inline-flex align-items-center gap-2">
                 <i data-lucide="check-circle" style="width: 14px;"></i>
-                PAID
+                {{ __('PAID') }}
             </span>
         </td>
         <td class="text-end pe-4">
@@ -59,7 +59,7 @@
                 <a href="{{ route('payments.show', $payment->id) }}" class="btn btn-action view" title="View Transaction / Receipt">
                     <i data-lucide="eye"></i>
                 </a>
-                <a href="{{ route('orders.receipt', $payment->order_id) }}" target="_blank" class="btn btn-action edit" style="background-color: #f1f5f9; color: #64748b;" title="Print Receipt">
+                <a href="{{ route('orders.receipt', $payment->order_id) }}" class="btn btn-action edit" style="background-color: #f1f5f9; color: #64748b;" title="Print Receipt">
                     <i data-lucide="printer"></i>
                 </a>
             </div>
@@ -67,7 +67,7 @@
     </tr>
     @empty
     <tr>
-        <td colspan="6" class="text-center py-5 text-muted">No transactions found.</td>
+        <td colspan="6" class="text-center py-5 text-muted">{{ __('No transactions found.') }}</td>
     </tr>
     @endforelse
 </x-master-table>
