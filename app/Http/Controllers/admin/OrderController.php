@@ -2,17 +2,25 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Category;
 use App\Models\MenuItem;
 use App\Models\Table;
 use App\Models\Customer;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
-use App\Models\Category;
+use App\Services\OrderService;
+use App\Http\Requests\StoreOrderRequest;
 
 class OrderController extends Controller
 {
+    protected $orderService;
+
+    public function __construct(OrderService $orderService)
+    {
+        $this->orderService = $orderService;
+    }
+
     /**
      * Display a listing of orders.
      */
@@ -51,117 +59,40 @@ class OrderController extends Controller
         $existingOrder = null;
         if ($request->has('order_id')) {
             $existingOrder = Order::with('items.menuItem')->find($request->order_id);
-            // If order is already completed, redirect back
             if ($existingOrder && $existingOrder->status === 'completed') {
                 return redirect()->route('orders.show', $existingOrder->id)->with('error', 'This order is already completed.');
             }
         }
 
-        return view('admin.orders.checkout', compact('menuItems', 'tables', 'customers', 'categories', 'existingOrder'));
+        $initialCart = $this->mapOrderToCart($existingOrder);
+
+        return view('admin.orders.checkout', compact('menuItems', 'tables', 'customers', 'categories', 'existingOrder', 'initialCart'));
     }
 
     /**
      * Store a newly created order.
      */
-    public function store(Request $request)
+    public function store(StoreOrderRequest $request)
     {
-        $request->validate([
-            'order_id' => 'nullable', // NEW: support existing order
-            'order_type' => 'required|in:dine_in,takeaway,delivery',
-            'table_id' => 'required_if:order_type,dine_in|nullable|exists:tables,id',
-            'customer_id' => 'nullable|exists:customers,id',
-            'items' => 'required|array|min:1',
-            'items.*.menu_item_id' => 'required|exists:menu_items,id',
-            'items.*.quantity' => 'required|integer|min:1',
-            // Payment fields (Optional for POS unified flow)
-            'payment_method' => 'nullable|in:cash,card,qr,khqr',
-            'paid_amount' => 'nullable|numeric',
-        ]);
-
-        return DB::transaction(function () use ($request) {
-            if ($request->filled('order_id')) {
-                $order = Order::find($request->order_id);
-                // Clear existing items to refresh from cart
-                $order->items()->delete();
-                $order->update([
-                    'order_type' => $request->order_type,
-                    'customer_id' => $request->customer_id,
-                    'table_id' => $request->table_id,
-                    'notes' => $request->notes,
-                ]);
-            } else {
-                $order = Order::create([
-                    'order_no' => 'ORD-' . strtoupper(uniqid()),
-                    'order_type' => $request->order_type,
-                    'customer_id' => $request->customer_id,
-                    'user_id' => auth()->id(),
-                    'table_id' => $request->table_id,
-                    'notes' => $request->notes,
-                    'status' => 'pending',
-                ]);
-            }
-
-            $total = 0;
-            foreach ($request->items as $itemData) {
-                $menuItem = MenuItem::find($itemData['menu_item_id']);
-                $quantity = $itemData['quantity'];
-                $price = $menuItem->price;
-                $subtotal = $price * $quantity;
-
-                $order->items()->create([
-                    'menu_item_id' => $menuItem->id,
-                    'quantity' => $quantity,
-                    'price' => $price,
-                    'subtotal' => $subtotal,
-                ]);
-
-                $total += $subtotal;
-            }
-
-            $taxRateSetting = \App\Helper\SystemHelper::getSetting('tax_percentage', 10) / 100;
-            $tax = $total * $taxRateSetting;
-            $totalAmount = $total + $tax;
-            $order->update([
-                'subtotal' => $total,
-                'tax' => $tax,
-                'total_amount' => $totalAmount,
-            ]);
-
-            // Handle Immediate Payment if provided (POS Flow)
-            if ($request->filled('payment_method')) {
-                $paid = $request->paid_amount ?? $totalAmount;
-                $change = max(0, $paid - $totalAmount);
-
-                $order->payment()->updateOrCreate(
-                    ['order_id' => $order->id],
-                    [
-                        'payment_method' => $request->payment_method,
-                        'total_amount' => $totalAmount,
-                        'paid_amount' => $paid,
-                        'change_amount' => $change,
-                        'status' => 'paid',
-                        'paid_at' => now(),
-                    ]
-                );
-
-                $order->update(['status' => 'completed']);
-
-                // Release table immediately if completed
-                if ($request->order_type === 'dine_in' && $request->table_id) {
-                    Table::where('id', $request->table_id)->update(['status' => 'available']);
-                }
-            } elseif ($request->order_type === 'dine_in' && $request->table_id) {
-                // Just occupy table if not paid yet or it's an update to a pending dine-in
-                Table::where('id', $request->table_id)->update(['status' => 'occupied']);
-            }
-
+        try {
+            $order = $this->orderService->processOrder($request->validated());
+            
             if ($request->wantsJson()) {
-                session()->flash('success', 'Order processed successfully!');
-                return response()->json(['success' => true, 'message' => 'Order processed successfully!', 'order_id' => $order->id]);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Order processed successfully!',
+                    'order_id' => $order->id,
+                    'order' => $order
+                ]);
             }
 
             return redirect()->route('orders.index')->with('success', 'Order processed successfully!');
-        });
+        } catch (\Exception $e) {
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            }
+            return redirect()->back()->with('error', 'Order processing failed: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -174,10 +105,10 @@ class OrderController extends Controller
         $tables = Table::all();
         $customers = Customer::all();
         
-        // Eager load items and menu items
         $existingOrder = $order->load('items.menuItem');
+        $initialCart = $this->mapOrderToCart($existingOrder);
         
-        return view('admin.orders.edit', compact('menuItems', 'tables', 'customers', 'categories', 'existingOrder'));
+        return view('admin.orders.edit', compact('menuItems', 'tables', 'customers', 'categories', 'existingOrder', 'initialCart'));
     }
 
     /**
@@ -186,7 +117,8 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         $order->load(['items.menuItem', 'customer', 'diningTable', 'user', 'payment']);
-        return view('admin.orders.show', compact('order'));
+        $appSettings = \App\Models\Setting::pluck('value', 'key')->toArray();
+        return view('admin.orders.show', compact('order', 'appSettings'));
     }
 
     /**
@@ -198,7 +130,6 @@ class OrderController extends Controller
             'status' => 'required|in:pending,preparing,ready,completed,cancelled',
         ]);
 
-        $oldStatus = $order->status;
         $order->update(['status' => $request->status]);
 
         // Release table if completed or cancelled
@@ -206,8 +137,7 @@ class OrderController extends Controller
             $order->diningTable->update(['status' => 'available']);
         }
 
-        session()->flash('success', 'Order status updated to ' . ucfirst($request->status));
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Order status updated to ' . ucfirst($request->status));
     }
 
     /**
@@ -217,5 +147,23 @@ class OrderController extends Controller
     {
         $order->delete();
         return redirect()->route('orders.index')->with('success', 'Order deleted successfully!');
+    }
+
+    /**
+     * Helper to map order items to the JS cart format.
+     */
+    private function mapOrderToCart($order)
+    {
+        if (!$order) return [];
+
+        return $order->items->map(function ($item) {
+            return [
+                'id' => (int) $item->menu_item_id,
+                'name' => optional($item->menuItem)->name ?? 'Unknown Item',
+                'price' => (float) $item->price,
+                'display_image' => optional($item->menuItem)->display_image ?? asset('images/placeholder.jpg'),
+                'qty' => (int) ($item->quantity ?? 1)
+            ];
+        })->values()->toArray();
     }
 }

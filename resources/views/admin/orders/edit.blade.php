@@ -454,20 +454,6 @@
 
 @push('js')
 <script>
-    @php
-    $initialCart = [];
-    if (isset($existingOrder) && $existingOrder) {
-        $initialCart = $existingOrder->items->map(function($item) {
-            return [
-                'id' => (int) $item->menu_item_id,
-                'name' => optional($item->menuItem)->name ?? 'Unknown Item',
-                'price' => (float) $item->price,
-                'display_image' => optional($item->menuItem)->display_image ?? asset('images/placeholder.jpg'),
-                'qty' => (int)($item->quantity ?? 1)
-            ];
-        })->values()->toArray();
-    }
-    @endphp
     let cart = {!! json_encode($initialCart) !!};
     const taxRate = parseFloat("{{ $appSettings['tax_percentage'] }}") / 100;
     const currency = "{{ $appSettings['currency'] }}";
@@ -691,56 +677,109 @@
         calculateChange();
     });
 
+    /**
+     * POS Service Module
+     * Encapsulates AJAX calls and UI state management
+     */
+    const POS = {
+        isProcessing: false,
+        btnSelector: '.btn-orange[onclick*="processPayment"]',
+
+        async request(endpoint, payload) {
+            if (this.isProcessing) return;
+            this.setLoading(true);
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                if (!response.ok) throw result;
+                return result;
+            } catch (error) {
+                this.handleError(error);
+                throw error;
+            } finally {
+                this.setLoading(false);
+            }
+        },
+
+        setLoading(status) {
+            this.isProcessing = status;
+            const btns = document.querySelectorAll(this.btnSelector);
+            btns.forEach(btn => {
+                if (status) {
+                    btn.dataset.originalHtml = btn.innerHTML;
+                    btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Processing...`;
+                    btn.disabled = true;
+                } else {
+                    btn.innerHTML = btn.dataset.originalHtml || 'PAYMENT & CHECKOUT';
+                    btn.disabled = false;
+                }
+            });
+        },
+
+        handleError(error) {
+            console.error('POS API Error:', error);
+            let message = 'An unexpected error occurred.';
+            
+            if (error.errors) {
+                message = Object.values(error.errors).flat().join('\n');
+            } else if (error.message) {
+                message = error.message;
+            }
+            
+            alert(message);
+        }
+    };
+
+    /**
+     * Primary Order Processing Function
+     */
     async function processPayment(isPaid = true) {
         if (cart.length === 0) {
-            alert('Please add items to cart first.');
+            alert('Your cart is empty.');
             return;
         }
 
-        const typeEl = document.querySelector('input[name="orderType"]:checked');
-        const type = typeEl ? typeEl.value : 'takeaway';
+        const type = document.querySelector('input[name="orderType"]:checked')?.value || 'takeaway';
+        const tableId = document.getElementById('tableId')?.value;
 
-        if (type === 'dine_in' && !document.getElementById('tableId').value) {
-            alert('Please select a table for Dine In orders.');
+        if (type === 'dine_in' && !tableId) {
+            alert('Please assign a table for Dine-In.');
             return;
         }
 
-        const payMethodChecked = document.querySelector('input[name="pay_method"]:checked');
-        const payMethod = payMethodChecked ? payMethodChecked.id.replace('pay_', '') : 'cash';
-
-        const data = {
+        const payMethod = document.querySelector('input[name="pay_method"]:checked')?.value || 'cash';
+        
+        const payload = {
             order_id: "{{ $existingOrder->id ?? '' }}",
             order_type: type,
-            table_id: document.getElementById('tableId').value,
-            notes: document.getElementById('orderNotes').value,
+            table_id: tableId,
+            notes: document.getElementById('orderNotes')?.value,
             items: cart.map(i => ({
                 menu_item_id: i.id,
                 quantity: i.qty
             })),
             payment_method: isPaid ? payMethod : null,
-            paid_amount: isPaid ? (parseFloat(document.getElementById('cashReceived').value) || 0) : 0
+            paid_amount: isPaid ? (parseFloat(document.getElementById('cashReceived')?.value) || 0) : 0
         };
 
         try {
-            const response = await fetch("/api/v1/orders", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                },
-                body: JSON.stringify(data)
-            });
-
-            if (response.ok) {
-                localStorage.removeItem('pos_cart'); // Clear storage after successful checkout
+            const result = await POS.request('/api/v1/orders', payload);
+            if (result.success) {
+                localStorage.removeItem('pos_cart');
                 window.location.href = "{{ route('orders.index') }}";
-            } else {
-                const err = await response.json();
-                alert(err.message || 'Error processing order');
             }
         } catch (e) {
-            console.error(e);
-            alert('Network error');
+            // Error managed by POS.handleError
         }
     }
 
