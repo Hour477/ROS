@@ -16,8 +16,8 @@
     </div>
 </div>
 
-<div class="checkout-actions p-3 border-top shadow-sm">
-    <button class="btn btn-success w-100 py-3 fw-black rounded-lg shadow-sm d-flex align-items-center justify-content-center gap-2 transform-active text-white" 
+<div class="checkout-actions p-2 border-top shadow-sm">
+    <button class="btn btn-success w-100 rounded-lg shadow-sm d-flex align-items-center justify-content-center gap-2 transform-active text-white" 
             data-bs-toggle="modal" data-bs-target="#paymentModal">
         <i data-lucide="credit-card" style="width: 20px;"></i>
         <span style="letter-spacing: 0.5px;">PAYMENT & CHECKOUT</span>

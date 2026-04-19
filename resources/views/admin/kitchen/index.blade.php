@@ -119,7 +119,7 @@
                             <div class="quantity-badge">
                                 {{ $item->quantity }} x
                             </div>
-                            <span class="fw-bold fs-6 text-dark">{{ $item->menuItem->name }}</span>
+                            <span class="fw-bold fs-6 text-dark">{{ $item->menuItem->name ?? '---' }}</span>
                         </div>
                         @if($order->status == 'pending')
                         <i data-lucide="dot" class="text-danger animate__animated animate__flash animate__infinite"></i>

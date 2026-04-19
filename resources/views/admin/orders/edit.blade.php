@@ -188,9 +188,6 @@
 </div>
 
 <style>
-    body {
-        background-color: #f8fafc !important;
-    }
 
     .pos-container {
         height: calc(100vh - 80px);
