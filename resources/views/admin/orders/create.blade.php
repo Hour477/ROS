@@ -6,7 +6,6 @@
 <div class="">
     <div class="pos-container" id="posApp">
         <div class="row g-0 h-100">
-
             <!-- Left: Menu Selection (8 Columns) -->
             <div class="col-lg-8 d-flex flex-column bg-light border-end overflow-hidden" style="height: calc(100vh - 80px);">
                 <!-- POS Search & Categories -->
@@ -30,10 +29,10 @@
                         </div>
 
                         <div class="search-box flex-grow-1" style="max-width: 320px;">
-                            <button class="nav-search-btn w-100 d-flex align-items-center justify-content-between" 
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#commandSearchModal"
-                                    onclick="window.searchType = 'categories';">
+                            <button class="nav-search-btn w-100 d-flex align-items-center justify-content-between"
+                                data-bs-toggle="modal"
+                                data-bs-target="#commandSearchModal"
+                                onclick="window.searchType = 'categories';">
                                 <div class="d-flex align-items-center gap-2">
                                     <i data-lucide="search" style="width: 16px; height: 16px;"></i>
                                     <span class="fw-semibold text-muted small">{{ __('Search...') }}</span>
@@ -111,8 +110,8 @@
                         </div>
                     </div>
 
-                    <div class="order-type-container mb-3 {{ $existingOrder ? 'opacity-50' : '' }}" style="{{ $existingOrder ? 'pointer-events: none;' : '' }}">
-                        <label class="extra-small fw-black text-muted text-uppercase mb-2 d-block">Service Type {{ $existingOrder ? '(Locked)' : '' }}</label>
+                    <div class="order-type-container mb-3">
+                        <label class="extra-small fw-black text-muted text-uppercase mb-2 d-block">Service Type</label>
                         <div class="d-flex gap-2">
                             <input type="radio" class="btn-check" name="orderType" id="dine_in" value="dine_in" {{ ($existingOrder && $existingOrder->order_type == 'dine_in') || (!$existingOrder) ? 'checked' : '' }} onchange="toggleTable()">
                             <label class="btn btn-premium-toggle flex-grow-1" for="dine_in">
@@ -131,7 +130,7 @@
                         </div>
                     </div>
 
-                    <div id="tableContainer" class="p-3 bg-white rounded-lg border shadow-sm transition-all {{ $existingOrder ? 'opacity-50' : '' }}" style="border-style: dashed !important; {{ $existingOrder ? 'pointer-events: none;' : '' }}">
+                    <div id="tableContainer" class="p-3 bg-white rounded-lg border shadow-sm transition-all" style="border-style: dashed !important;">
                         <label class="extra-small fw-black text-primary text-uppercase mb-2 d-block">Table Assignment</label>
                         <select id="tableId" class="form-select select2" data-placeholder="Choose Table...">
                             <option value=""></option>
@@ -524,7 +523,21 @@
 
 @push('js')
 <script>
-    let cart = [];
+    @php
+        $initialCart = [];
+        if (isset($existingOrder) && $existingOrder) {
+            $initialCart = $existingOrder->items->map(function($item) {
+                return [
+                    'id' => (int) $item->menu_item_id,
+                    'name' => optional($item->menuItem)->name ?? 'Unknown Item',
+                    'price' => (float) $item->price,
+                    'display_image' => optional($item->menuItem)->display_image ?? asset('images/placeholder.jpg'),
+                    'qty' => (int) ($item->quantity ?? $item->qty ?? 1)
+                ];
+            })->values()->toArray();
+        }
+    @endphp
+    let cart = @json($initialCart);
     const taxRate = parseFloat("{{ $appSettings['tax_percentage'] }}") / 100;
     const currency = "{{ $appSettings['currency'] }}";
     const exchangeRate = parseFloat("{{ $appSettings['exchange_rate'] }}") || 4100;
@@ -534,7 +547,11 @@
         document.querySelectorAll('.btn-category').forEach(btn => {
             if (btn.dataset.category == catId || (catId === 'all' && btn.dataset.category === 'all')) {
                 btn.click();
-                btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                btn.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                    inline: 'center'
+                });
             }
         });
     }
@@ -608,9 +625,8 @@
     }
 
     function renderCart() {
-        saveCartToStorage(); // Auto-save on every render
         const container = document.getElementById('cartItems');
-        if (cart.length === 0) {
+        if (!Array.isArray(cart) || cart.length === 0) {
             container.innerHTML = `
                 <div class="text-center py-5 opacity-50">
                     <i data-lucide="shopping-bag" class="mb-3" style="width: 48px; height: 48px;"></i>
@@ -624,25 +640,34 @@
         let html = '';
         let subtotal = 0;
         cart.forEach(item => {
-            const lineTotal = item.price * item.qty;
+            if (!item) return;
+            const price = parseFloat(item.price) || 0;
+            const qty = parseInt(item.qty) || 0;
+            const lineTotal = price * qty;
             subtotal += lineTotal;
+            
+            const itemId = item.id || Math.random().toString(36).substr(2, 9);
+            const itemName = item.name || 'Unknown Item';
+            const itemImg = item.display_image || "{{ asset('images/placeholder.jpg') }}";
+
             html += `
                 <div class="cart-item">
-                    <img src="${item.display_image}" class="rounded shadow-sm" style="width: 50px; height: 50px; object-fit: cover;">
+                    <img src="${itemImg}" class="rounded shadow-sm" style="width: 50px; height: 50px; object-fit: cover;" onerror="this.src='{{ asset('images/placeholder.jpg') }}'">
                     <div class="flex-grow-1">
-                        <div class="fw-bold text-dark small">${item.name}</div>
+                        <div class="fw-bold text-dark small">${itemName}</div>
                         <div class="text-primary fw-bold small">${currency}${lineTotal.toFixed(2)}</div>
                     </div>
                     <div class="qty-controls">
-                        <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
-                        <span class="mx-2 fw-bold small">${item.qty}</span>
-                        <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
+                        <button class="qty-btn" onclick="updateQty(${itemId}, -1)">-</button>
+                        <span class="mx-2 fw-bold small">${qty}</span>
+                        <button class="qty-btn" onclick="updateQty(${itemId}, 1)">+</button>
                     </div>
                 </div>`;
         });
         container.innerHTML = html;
         updateTotals(subtotal);
         if (window.lucide) lucide.createIcons();
+        saveCartToStorage();
     }
 
     function updateTotals(subtotal) {
@@ -798,19 +823,8 @@
     function loadCartFromStorage() {
         // If we have an existing order from backend, prioritize it over localStorage
         @if(isset($existingOrder) && $existingOrder)
-        @php
-        $cartData = $existingOrder->items->map(function($item) {
-            return [
-                'id' => $item->menu_item_id,
-                'name' => optional($item->menuItem)->name ?? 'Unknown Item',
-                'price' => (float) $item->price,
-                'display_image' => optional($item->menuItem)->display_image ?? asset('images/logo.png'),
-                'qty' => (int) $item->quantity
-            ];
-        });
-        @endphp
-        cart = {!! json_encode($cartData) !!};
-        document.getElementById('orderNotes').value = {!! json_encode($existingOrder->notes) !!} || '';
+        document.getElementById('orderNotes').value = @json($existingOrder->notes) || '';
+        document.getElementById('tableId').value = @json($existingOrder->table_id) || '';
         return;
         @endif
 

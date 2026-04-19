@@ -14,7 +14,7 @@
                 <span class="fw-semibold">{{ __('Search...') }}</span>
             </div>
             <kbd class="kbd-shortcut ms-auto">
-                <span class="opacity-75">Ctrl</span> C
+                <span class="opacity-75">Ctrl</span> K
             </kbd>
         </button>
     </div>

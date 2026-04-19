@@ -376,7 +376,7 @@
             if (!(e.ctrlKey || e.metaKey)) return;
             const key = e.key.toLowerCase();
 
-            if (key === 'c' || key === 'o') {
+            if (key === 'k' || key === 'o') {
                 e.preventDefault();
                 window.searchType = (key === 'o') ? 'categories' : 'all';
                 const modal = getCommandModal();
@@ -442,7 +442,7 @@
             if (!commandResults) return;
 
             const type = window.searchType || 'all';
-            
+
             // Filter results to match the current search type
             let displayResults = filtered.filter(item => {
                 if (type === 'categories') return item.type === 'category';
