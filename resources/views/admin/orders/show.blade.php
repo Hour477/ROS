@@ -15,8 +15,8 @@
                 <span class="d-inline d-sm-none">{{ __('Back') }}</span>
             </a>
             @if($order->status == 'pending')
-            <a href="{{ route('orders.create', ['order_id' => $order_id ?? $order->id]) }}" class="btn btn-orange px-3 px-sm-4 py-2 d-flex align-items-center gap-2 rounded-lg shadow-sm">
-                <i data-lucide="plus-circle" style="width: 18px;"></i>
+            <a href="{{ route('orders.edit', $order->id) }}" class="btn btn-orange px-3 px-sm-4 py-2 d-flex align-items-center gap-2 rounded-lg shadow-sm">
+                <i data-lucide="edit" style="width: 18px;"></i>
                 <span>{{ __('Add Items / Checkout') }}</span>
             </a>
             @endif

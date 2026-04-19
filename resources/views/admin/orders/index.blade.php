@@ -3,15 +3,14 @@
 @section('title', 'Order History')
 
 @section('content')
-<x-master-table 
-    title="{{ __('Order Management') }}" 
-    subtitle="{{ __('Track and manage live customer orders and sales') }}" 
-    :createRoute="route('orders.create')" 
-    createLabel="{{ __('New Order') }}" 
-    searchPlaceholder="{{ __('Search by Order ID...') }}" 
-    :headers="['#', __('Order Details'), __('Type'), __('Amount'), __('Status'), __('Date'), __('Actions')]" 
-    :items="$orders"
->
+<x-master-table
+    title="{{ __('Order Management') }}"
+    subtitle="{{ __('Track and manage live customer orders and sales') }}"
+    :createRoute="route('orders.create')"
+    createLabel="{{ __('New Order') }}"
+    searchPlaceholder="{{ __('Search by Order ID...') }}"
+    :headers="['#', __('Order Details'), __('Type'), __('Amount'), __('Status'), __('Date'), __('Actions')]"
+    :items="$orders">
     <!-- Filter Slot -->
     <x-slot name="filters">
         <form action="{{ url()->current() }}" method="GET" class="d-flex gap-2 m-0 align-items-center">
@@ -29,9 +28,9 @@
                 <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
             </select>
             @if(request()->anyFilled(['search', 'type', 'status']))
-                <a href="{{ route('orders.index') }}" class="btn btn-action reset" title="Clear Filters" style="width: 48px; height: 48px;">
-                    <i data-lucide="rotate-ccw" style="width: 20px;"></i>
-                </a>
+            <a href="{{ route('orders.index') }}" class="btn btn-action reset" title="Clear Filters" style="width: 48px; height: 48px;">
+                <i data-lucide="rotate-ccw" style="width: 20px;"></i>
+            </a>
             @endif
         </form>
     </x-slot>
@@ -54,12 +53,12 @@
         </td>
         <td class="text-center">
             @php
-                $typeIcons = [
-                    'dine_in' => ['icon' => 'utensils', 'label' => 'Dine In'],
-                    'takeaway' => ['icon' => 'shopping-bag', 'label' => 'Takeaway'],
-                    'delivery' => ['icon' => 'truck', 'label' => 'Delivery'],
-                ];
-                $type = $typeIcons[$order->order_type] ?? ['icon' => 'package', 'label' => 'Other'];
+            $typeIcons = [
+            'dine_in' => ['icon' => 'utensils', 'label' => 'Dine In'],
+            'takeaway' => ['icon' => 'shopping-bag', 'label' => 'Takeaway'],
+            'delivery' => ['icon' => 'truck', 'label' => 'Delivery'],
+            ];
+            $type = $typeIcons[$order->order_type] ?? ['icon' => 'package', 'label' => 'Other'];
             @endphp
             <div class="d-inline-flex align-items-center gap-2 px-3 py-1 bg-light rounded-pill border">
                 <i data-lucide="{{ $type['icon'] }}" class="text-muted" style="width: 14px;"></i>
@@ -72,14 +71,14 @@
         </td>
         <td class="text-center">
             @php
-                $statusConfig = [
-                    'pending' => ['class' => 'bg-secondary-subtle text-secondary', 'icon' => 'clock'],
-                    'preparing' => ['class' => 'bg-info-subtle text-info', 'icon' => 'flame'],
-                    'ready' => ['class' => 'bg-warning-subtle text-warning', 'icon' => 'bell'],
-                    'completed' => ['class' => 'bg-success-subtle text-success', 'icon' => 'check-circle'],
-                    'cancelled' => ['class' => 'bg-danger-subtle text-danger', 'icon' => 'x-circle'],
-                ];
-                $config = $statusConfig[$order->status] ?? $statusConfig['pending'];
+            $statusConfig = [
+            'pending' => ['class' => 'bg-secondary-subtle text-secondary', 'icon' => 'clock'],
+            'preparing' => ['class' => 'bg-info-subtle text-info', 'icon' => 'flame'],
+            'ready' => ['class' => 'bg-warning-subtle text-warning', 'icon' => 'bell'],
+            'completed' => ['class' => 'bg-success-subtle text-success', 'icon' => 'check-circle'],
+            'cancelled' => ['class' => 'bg-danger-subtle text-danger', 'icon' => 'x-circle'],
+            ];
+            $config = $statusConfig[$order->status] ?? $statusConfig['pending'];
             @endphp
             <span class="badge {{ $config['class'] }} px-3 py-2 rounded-pill d-inline-flex align-items-center gap-2">
                 <i data-lucide="{{ $config['icon'] }}" style="width: 14px;"></i>
@@ -92,6 +91,9 @@
         </td>
         <td class="text-end pe-4">
             <div class="d-flex justify-content-end gap-2">
+                <a href="{{ route('orders.edit', $order->id) }}" class="btn btn-action view" title="edit">
+                    <i data-lucide="edit"></i>
+                </a>
                 <a href="{{ route('orders.show', $order->id) }}" class="btn btn-action view" title="View Details">
                     <i data-lucide="eye"></i>
                 </a>
@@ -125,6 +127,7 @@
         justify-content: center;
         border: 1px solid #e2e8f0;
     }
+
     .extra-small {
         font-size: 0.65rem;
     }

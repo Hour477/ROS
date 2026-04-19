@@ -57,7 +57,7 @@ class OrderController extends Controller
             }
         }
 
-        return view('admin.orders.create', compact('menuItems', 'tables', 'customers', 'categories', 'existingOrder'));
+        return view('admin.orders.checkout', compact('menuItems', 'tables', 'customers', 'categories', 'existingOrder'));
     }
 
     /**
@@ -162,6 +162,22 @@ class OrderController extends Controller
 
             return redirect()->route('orders.index')->with('success', 'Order processed successfully!');
         });
+    }
+
+    /**
+     * Show the form for editing the specified order.
+     */
+    public function edit(Order $order)
+    {
+        $categories = Category::all();
+        $menuItems = MenuItem::with('category')->get();
+        $tables = Table::all();
+        $customers = Customer::all();
+        
+        // Eager load items and menu items
+        $existingOrder = $order->load('items.menuItem');
+        
+        return view('admin.orders.edit', compact('menuItems', 'tables', 'customers', 'categories', 'existingOrder'));
     }
 
     /**

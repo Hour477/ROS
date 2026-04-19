@@ -43,13 +43,22 @@
                             </button>
                         </div>
 
-                        <div class="currency-toggle-wrapper">
-                            <div class="btn-group border rounded-lg overflow-hidden shadow-sm" style="background: white;">
-                                <input type="radio" class="btn-check" name="displayCurrency" id="displayUSD" value="USD" checked onchange="renderCart()">
-                                <label class="btn btn-sm btn-white px-3 py-2 fw-bold" for="displayUSD" style="font-size: 0.75rem;">$ USD</label>
+                        <div class="d-flex align-items-center gap-2">
+                            @if(isset($existingOrder) && $existingOrder)
+                            <a href="{{ route('orders.show', $existingOrder->id) }}" class="btn btn-sm btn-white border shadow-sm px-3 py-2 fw-bold d-flex align-items-center gap-2 rounded-lg" style="font-size: 0.75rem;">
+                                <i data-lucide="eye" style="width: 14px;"></i>
+                                {{ __('Order Details') }}
+                            </a>
+                            @endif
 
-                                <input type="radio" class="btn-check" name="displayCurrency" id="displayKHR" value="KHR" onchange="renderCart()">
-                                <label class="btn btn-sm btn-white px-3 py-2 fw-bold" for="displayKHR" style="font-size: 0.75rem;">៛ KHR</label>
+                            <div class="currency-toggle-wrapper">
+                                <div class="btn-group border rounded-lg overflow-hidden shadow-sm" style="background: white;">
+                                    <input type="radio" class="btn-check" name="displayCurrency" id="displayUSD" value="USD" checked onchange="renderCart()">
+                                    <label class="btn btn-sm btn-white px-3 py-2 fw-bold" for="displayUSD" style="font-size: 0.75rem;">$ USD</label>
+
+                                    <input type="radio" class="btn-check" name="displayCurrency" id="displayKHR" value="KHR" onchange="renderCart()">
+                                    <label class="btn btn-sm btn-white px-3 py-2 fw-bold" for="displayKHR" style="font-size: 0.75rem;">៛ KHR</label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -96,85 +105,7 @@
 
             <!-- Right: Cart & Checkout (4 Columns) -->
             <div class="col-lg-4 d-flex flex-column bg-white shadow-lg" style="height: calc(100vh - 80px);">
-                <!-- Customer & Type Selection -->
-                <div class="p-4 border-bottom bg-light">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="fw-black mb-0"><i data-lucide="shopping-cart" class="me-2 text-primary"></i>Current Order</h5>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-sm btn-outline-primary border-2 rounded-circle hover-lift" onclick="persistCartManually()" title="Save / Hold Order">
-                                <i data-lucide="save" style="width: 16px;"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger border-2 rounded-circle hover-lift" onclick="clearCart()" title="Clear Cart">
-                                <i data-lucide="trash-2" style="width: 16px;"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="order-type-container mb-3">
-                        <label class="extra-small fw-black text-muted text-uppercase mb-2 d-block">Service Type</label>
-                        <div class="d-flex gap-2">
-                            <input type="radio" class="btn-check" name="orderType" id="dine_in" value="dine_in" {{ ($existingOrder && $existingOrder->order_type == 'dine_in') || (!$existingOrder) ? 'checked' : '' }} onchange="toggleTable()">
-                            <label class="btn btn-premium-toggle flex-grow-1" for="dine_in">
-                                <i data-lucide="utensils"></i> Dine In
-                            </label>
-
-                            <input type="radio" class="btn-check" name="orderType" id="takeaway" value="takeaway" {{ $existingOrder && $existingOrder->order_type == 'takeaway' ? 'checked' : '' }} onchange="toggleTable()">
-                            <label class="btn btn-premium-toggle flex-grow-1" for="takeaway">
-                                <i data-lucide="shopping-bag"></i> Takeaway
-                            </label>
-
-                            <input type="radio" class="btn-check" name="orderType" id="delivery" value="delivery" {{ $existingOrder && $existingOrder->order_type == 'delivery' ? 'checked' : '' }} onchange="toggleTable()">
-                            <label class="btn btn-premium-toggle flex-grow-1" for="delivery">
-                                <i data-lucide="truck"></i> Delivery
-                            </label>
-                        </div>
-                    </div>
-
-                    <div id="tableContainer" class="p-3 bg-white rounded-lg border shadow-sm transition-all" style="border-style: dashed !important;">
-                        <label class="extra-small fw-black text-primary text-uppercase mb-2 d-block">Table Assignment</label>
-                        <select id="tableId" class="form-select select2" data-placeholder="Choose Table...">
-                            <option value=""></option>
-                            @foreach($tables as $table)
-                            <option value="{{ $table->id }}" {{ $existingOrder && $existingOrder->table_id == $table->id ? 'selected' : '' }}>{{ $table->name }} ({{ $table->capacity }}p)</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Cart Items List -->
-                <div class="flex-grow-1 overflow-auto p-4" id="cartItems">
-                    <div class="text-center py-5 opacity-50 empty-cart-msg">
-                        <i data-lucide="shopping-bag" class="mb-3" style="width: 48px; height: 48px;"></i>
-                        <p class="fw-bold">Your cart is empty</p>
-                    </div>
-                </div>
-
-                <!-- Summary & Checkout -->
-                <div class="p-4 bg-light border-top mt-auto">
-                    <div class="summary-details mb-4">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Subtotal</span>
-                            <span class="fw-bold" id="subtotalLabel">{{ $appSettings['currency'] }}0.00</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-3 pb-3 border-bottom">
-                            <span class="text-muted">Tax ({{ $appSettings['tax_percentage'] }}%)</span>
-                            <span class="fw-bold" id="taxLabel">{{ $appSettings['currency'] }}0.00</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span class="h5 fw-black mb-0">Total</span>
-                            <div class="text-end" id="totalDisplayArea">
-                                {{-- Area will be updated by JS --}}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="checkout-actions p-3  border-top shadow-sm">
-                        <button class="btn btn-success  w-100 py-3 fw-black rounded-lg shadow-sm d-flex align-items-center justify-content-center gap-2 transform-active text-white" data-bs-toggle="modal" data-bs-target="#paymentModal">
-                            <i data-lucide="credit-card" style="width: 20px;"></i>
-                            <span style="letter-spacing: 0.5px;">PAYMENT & CHECKOUT</span>
-                        </button>
-                    </div>
-                </div>
+                @include('admin.cart.index')
             </div>
         </div>
     </div>
@@ -524,20 +455,20 @@
 @push('js')
 <script>
     @php
-        $initialCart = [];
-        if (isset($existingOrder) && $existingOrder) {
-            $initialCart = $existingOrder->items->map(function($item) {
-                return [
-                    'id' => (int) $item->menu_item_id,
-                    'name' => optional($item->menuItem)->name ?? 'Unknown Item',
-                    'price' => (float) $item->price,
-                    'display_image' => optional($item->menuItem)->display_image ?? asset('images/placeholder.jpg'),
-                    'qty' => (int) ($item->quantity ?? $item->qty ?? 1)
-                ];
-            })->values()->toArray();
-        }
+    $initialCart = [];
+    if (isset($existingOrder) && $existingOrder) {
+        $initialCart = $existingOrder->items->map(function($item) {
+            return [
+                'id' => (int) $item->menu_item_id,
+                'name' => optional($item->menuItem)->name ?? 'Unknown Item',
+                'price' => (float) $item->price,
+                'display_image' => optional($item->menuItem)->display_image ?? asset('images/placeholder.jpg'),
+                'qty' => (int)($item->quantity ?? 1)
+            ];
+        })->values()->toArray();
+    }
     @endphp
-    let cart = @json($initialCart);
+    let cart = {!! json_encode($initialCart) !!};
     const taxRate = parseFloat("{{ $appSettings['tax_percentage'] }}") / 100;
     const currency = "{{ $appSettings['currency'] }}";
     const exchangeRate = parseFloat("{{ $appSettings['exchange_rate'] }}") || 4100;
@@ -574,16 +505,19 @@
     });
 
     // Search Logic
-    document.getElementById('menuSearch').addEventListener('input', function() {
-        const term = this.value.toLowerCase();
-        document.querySelectorAll('.menu-item-card').forEach(card => {
-            if (card.dataset.name.includes(term)) {
-                card.classList.remove('d-none');
-            } else {
-                card.classList.add('d-none');
-            }
+    const menuSearch = document.getElementById('menuSearch');
+    if (menuSearch) {
+        menuSearch.addEventListener('input', function() {
+            const term = this.value.toLowerCase();
+            document.querySelectorAll('.menu-item-card').forEach(card => {
+                if (card.dataset.name.includes(term)) {
+                    card.classList.remove('d-none');
+                } else {
+                    card.classList.add('d-none');
+                }
+            });
         });
-    });
+    }
 
     function toggleTable() {
         const checkedEl = document.querySelector('input[name="orderType"]:checked');
@@ -616,16 +550,18 @@
     }
 
     function updateQty(id, delta) {
-        const item = cart.find(i => i.id === id);
+        const item = cart.find(i => i.id == id);
         if (item) {
             item.qty += delta;
-            if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+            if (item.qty <= 0) cart = cart.filter(i => i.id != id);
             renderCart();
         }
     }
 
     function renderCart() {
         const container = document.getElementById('cartItems');
+        if (!container) return;
+
         if (!Array.isArray(cart) || cart.length === 0) {
             container.innerHTML = `
                 <div class="text-center py-5 opacity-50">
@@ -645,22 +581,22 @@
             const qty = parseInt(item.qty) || 0;
             const lineTotal = price * qty;
             subtotal += lineTotal;
-            
-            const itemId = item.id || Math.random().toString(36).substr(2, 9);
+
+            const itemId = item.id;
             const itemName = item.name || 'Unknown Item';
             const itemImg = item.display_image || "{{ asset('images/placeholder.jpg') }}";
 
             html += `
-                <div class="cart-item">
-                    <img src="${itemImg}" class="rounded shadow-sm" style="width: 50px; height: 50px; object-fit: cover;" onerror="this.src='{{ asset('images/placeholder.jpg') }}'">
+                <div class="cart-item" data-id="${itemId}">
+                    <img src="${itemImg}" class="rounded shadow-sm" style="width: 48px; height: 48px; object-fit: cover;" onerror="this.src='{{ asset('images/placeholder.jpg') }}'">
                     <div class="flex-grow-1">
-                        <div class="fw-bold text-dark small">${itemName}</div>
+                        <div class="fw-bold text-dark extra-small text-truncate" style="max-width: 150px;">${itemName}</div>
                         <div class="text-primary fw-bold small">${currency}${lineTotal.toFixed(2)}</div>
                     </div>
                     <div class="qty-controls">
-                        <button class="qty-btn" onclick="updateQty(${itemId}, -1)">-</button>
+                        <button class="qty-btn" onclick="updateQty('${itemId}', -1)">-</button>
                         <span class="mx-2 fw-bold small">${qty}</span>
-                        <button class="qty-btn" onclick="updateQty(${itemId}, 1)">+</button>
+                        <button class="qty-btn" onclick="updateQty('${itemId}', 1)">+</button>
                     </div>
                 </div>`;
         });
@@ -782,12 +718,11 @@
                 quantity: i.qty
             })),
             payment_method: isPaid ? payMethod : null,
-            paid_amount: isPaid ? (parseFloat(document.getElementById('cashReceived').value) || 0) : 0,
-            _token: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            paid_amount: isPaid ? (parseFloat(document.getElementById('cashReceived').value) || 0) : 0
         };
 
         try {
-            const response = await fetch("{{ route('orders.store') }}", {
+            const response = await fetch("/api/v1/orders", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -823,8 +758,13 @@
     function loadCartFromStorage() {
         // If we have an existing order from backend, prioritize it over localStorage
         @if(isset($existingOrder) && $existingOrder)
-        document.getElementById('orderNotes').value = @json($existingOrder->notes) || '';
-        document.getElementById('tableId').value = @json($existingOrder->table_id) || '';
+        if (document.getElementById('orderNotes')) {
+            document.getElementById('orderNotes').value = {!! json_encode($existingOrder->notes ?? '') !!};
+        }
+        if (document.getElementById('tableId')) {
+            document.getElementById('tableId').value = "{{ $existingOrder->table_id ?? '' }}";
+        }
+        renderCart();
         return;
         @endif
 
