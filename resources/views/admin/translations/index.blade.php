@@ -32,18 +32,12 @@
             <div class="text-dark small fw-medium">{{ Str::limit($item->kh, 50) }}</div>
         </td>
         <td class="text-end pe-4">
-            <div class="d-flex justify-content-end gap-2">
-                <a href="{{ route('translations.edit', $item->id) }}" class="btn btn-action edit" title="Edit Translation">
-                    <i data-lucide="edit-3"></i>
-                </a>
-                <button type="button" class="btn btn-action delete" title="Delete Translation" onclick="confirmDelete('delete-form-{{ $item->id }}', '{{ $item->key }}')">
-                    <i data-lucide="trash-2"></i>
-                </button>
-                <form id="delete-form-{{ $item->id }}" action="{{ route('translations.destroy', $item->id) }}" method="POST" class="d-none">
-                    @csrf
-                    @method('DELETE')
-                </form>
-            </div>
+            <x-table-actions 
+                :editRoute="route('translations.edit', $item->id)" 
+                :deleteRoute="route('translations.destroy', $item->id)" 
+                :id="$item->id" 
+                :name="$item->key" 
+            />
         </td>
     </tr>
     @empty

@@ -72,11 +72,11 @@
         <td class="text-center">
             @php
             $statusConfig = [
-            'pending' => ['class' => 'bg-secondary-subtle text-secondary', 'icon' => 'clock'],
-            'preparing' => ['class' => 'bg-info-subtle text-info', 'icon' => 'flame'],
-            'ready' => ['class' => 'bg-warning-subtle text-warning', 'icon' => 'bell'],
-            'completed' => ['class' => 'bg-success-subtle text-success', 'icon' => 'check-circle'],
-            'cancelled' => ['class' => 'bg-danger-subtle text-danger', 'icon' => 'x-circle'],
+                'pending'   => ['class' => 'status-badge pending', 'icon' => 'clock'],
+                'preparing' => ['class' => 'status-badge preparing', 'icon' => 'flame'],
+                'ready'     => ['class' => 'status-badge ready', 'icon' => 'bell'],
+                'completed' => ['class' => 'status-badge completed', 'icon' => 'check-circle'],
+                'cancelled' => ['class' => 'status-badge cancelled', 'icon' => 'x-circle'],
             ];
             $config = $statusConfig[$order->status] ?? $statusConfig['pending'];
             @endphp
@@ -90,21 +90,13 @@
             <div class="extra-small text-muted">{{ $order->created_at->format('h:i A') }}</div>
         </td>
         <td class="text-end pe-4">
-            <div class="d-flex justify-content-end gap-2">
-                <a href="{{ route('orders.edit', $order->id) }}" class="btn btn-action view" title="edit">
-                    <i data-lucide="edit"></i>
-                </a>
-                <a href="{{ route('orders.show', $order->id) }}" class="btn btn-action view" title="View Details">
-                    <i data-lucide="eye"></i>
-                </a>
-                <button type="button" class="btn btn-action delete" title="Delete Order" onclick="confirmDelete('delete-form-{{ $order->id }}', '{{ $order->order_no }}')">
-                    <i data-lucide="trash-2"></i>
-                </button>
-                <form id="delete-form-{{ $order->id }}" action="{{ route('orders.destroy', $order->id) }}" method="POST" class="d-none">
-                    @csrf
-                    @method('DELETE')
-                </form>
-            </div>
+            <x-table-actions 
+                :editRoute="route('orders.edit', $order->id)" 
+                :viewRoute="route('orders.show', $order->id)" 
+                :deleteRoute="route('orders.destroy', $order->id)" 
+                :id="$order->id" 
+                :name="$order->order_no" 
+            />
         </td>
     </tr>
     @empty
@@ -131,5 +123,23 @@
     .extra-small {
         font-size: 0.65rem;
     }
+
+    /* Premium Status Badges */
+    .status-badge {
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        transition: all 0.2s ease;
+    }
+    
+    .status-badge:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.05);
+    }
+
+    .status-badge.pending { background-color: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+    .status-badge.preparing { background-color: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; }
+    .status-badge.ready { background-color: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+    .status-badge.completed { background-color: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+    .status-badge.cancelled { background-color: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
 </style>
 @endsection

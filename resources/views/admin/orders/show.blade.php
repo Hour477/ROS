@@ -529,7 +529,11 @@
 @push('js')
 <script>
     function calculateChange() {
-        const total = {{ $order->total_amount }};
+        const total = {
+            {
+                $order - > total_amount
+            }
+        };
         const paid = parseFloat(document.getElementById('cashReceived').value) || 0;
         const change = paid - total;
         const changeDisplay = document.getElementById('changeAmount');
@@ -563,7 +567,11 @@
 
         const data = {
             payment_method: payMethod,
-            paid_amount: parseFloat(document.getElementById('cashReceived').value) || {{ $order->total_amount }},
+            paid_amount: parseFloat(document.getElementById('cashReceived').value) || {
+                {
+                    $order - > total_amount
+                }
+            },
             notes: document.getElementById('orderNotes').value,
             _token: "{{ csrf_token() }}"
         };

@@ -3,15 +3,14 @@
 @section('title', __('Table Management'))
 
 @section('content')
-<x-master-table 
-    title="{{ __('Table Management') }}" 
-    subtitle="{{ __('Organize your dining area and track occupancy') }}" 
-    :createRoute="route('tables.create')" 
-    createLabel="{{ __('Add New Table') }}" 
-    searchPlaceholder="{{ __('Search by table name...') }}" 
-    :headers="['#', __('Name'), __('Capacity'), __('Status'), __('Actions')]" 
-    :items="$tables"
->
+<x-master-table
+    title="{{ __('Table Management') }}"
+    subtitle="{{ __('Organize your dining area and track occupancy') }}"
+    :createRoute="route('tables.create')"
+    createLabel="{{ __('Add New Table') }}"
+    searchPlaceholder="{{ __('Search by table name...') }}"
+    :headers="['#', __('Name'), __('Capacity'), __('Status'), __('Actions')]"
+    :items="$tables">
     <x-slot name="filters">
         <form action="{{ url()->current() }}" method="GET" class="d-flex gap-2 m-0 align-items-center">
             <select name="status" class="select2" onchange="this.form.submit()">
@@ -21,9 +20,9 @@
                 <option value="reserved" {{ request('status') == 'reserved' ? 'selected' : '' }}>{{ __('Reserved') }}</option>
             </select>
             @if(request()->anyFilled(['search', 'status']))
-                <a href="{{ route('tables.index') }}" class="btn btn-action reset" title="Clear Filters" style="width: 48px; height: 48px;">
-                    <i data-lucide="rotate-ccw" style="width: 20px;"></i>
-                </a>
+            <a href="{{ route('tables.index') }}" class="btn btn-action reset" title="Clear Filters" style="width: 48px; height: 48px;">
+                <i data-lucide="rotate-ccw" style="width: 20px;"></i>
+            </a>
             @endif
         </form>
     </x-slot>
@@ -52,12 +51,12 @@
         </td>
         <td class="text-center">
             @php
-                $statusConfig = [
-                    'available' => ['class' => 'bg-success-subtle text-success', 'icon' => 'check-circle'],
-                    'occupied' => ['class' => 'bg-danger-subtle text-danger', 'icon' => 'user-minus'],
-                    'reserved' => ['class' => 'bg-warning-subtle text-warning', 'icon' => 'clock'],
-                ];
-                $config = $statusConfig[$table->status] ?? $statusConfig['available'];
+            $statusConfig = [
+            'available' => ['class' => 'bg-success-subtle text-success', 'icon' => 'check-circle'],
+            'occupied' => ['class' => 'bg-danger-subtle text-danger', 'icon' => 'user-minus'],
+            'reserved' => ['class' => 'bg-warning-subtle text-warning', 'icon' => 'clock'],
+            ];
+            $config = $statusConfig[$table->status] ?? $statusConfig['available'];
             @endphp
             <span class="badge {{ $config['class'] }} px-3 py-2 rounded-pill d-inline-flex align-items-center gap-2">
                 <i data-lucide="{{ $config['icon'] }}" style="width: 14px;"></i>
@@ -65,21 +64,10 @@
             </span>
         </td>
         <td class="text-end pe-4">
-            <div class="d-flex justify-content-end gap-2">
-                <a href="{{ route('tables.show', $table->id) }}" class="btn btn-action view" title="View Table Info">
-                    <i data-lucide="eye"></i>
-                </a>
-                <a href="{{ route('tables.edit', $table->id) }}" class="btn btn-action edit" title="Edit Table">
-                    <i data-lucide="edit-3"></i>
-                </a>
-                <button type="button" class="btn btn-action delete" title="Delete Table" onclick="confirmDelete('delete-form-{{ $table->id }}', '{{ $table->name }}')">
-                    <i data-lucide="trash-2"></i>
-                </button>
-                <form id="delete-form-{{ $table->id }}" action="{{ route('tables.destroy', $table->id) }}" method="POST" class="d-none">
-                    @csrf
-                    @method('DELETE')
-                </form>
-            </div>
+            <x-table-actions
+                :editRoute="route('tables.edit', $table->id)"
+                :viewRoute="route('tables.show', $table->id)"
+                :deleteRoute="route('tables.destroy', $table->id)" />
         </td>
     </tr>
     @empty

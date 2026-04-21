@@ -12,10 +12,7 @@ class NavigationHelper
     public static function getSidebarMenu(): array
     {
         $user = auth()->user();
-        $isAdmin = $user && $user->role && $user->role->slug === 'admin';
-        $isCashier = $user && $user->role && $user->role->slug === 'cashier';
-        $isKitchen = $user && $user->role && $user->role->slug === 'kitchen';
-        $isStaff = $isAdmin || $isCashier;
+        if (!$user) return [];
 
         return [
             [
@@ -31,47 +28,48 @@ class NavigationHelper
             ],
             [
                 'header' => 'MANAGEMENT',
-                'visible' => $isAdmin || $isCashier,
+                'visible' => $user->can('view-menu') || $user->can('view-tables'),
                 'items' => [
                     [
                         'label' => 'Categories',
                         'route' => 'categories.index',
                         'icon' => 'grid',
                         'activePattern' => 'categories.*',
-                        'visible' => $isAdmin,
+                        'visible' => $user->can('view-menu'),
                     ],
                     [
                         'label' => 'Menu Items',
                         'route' => 'menu.index',
                         'icon' => 'utensils-crossed',
                         'activePattern' => 'menu.*',
-                        'visible' => $isAdmin,
+                        'visible' => $user->can('view-menu'),
                     ],
                     [
                         'label' => 'Tables',
                         'route' => 'tables.index',
                         'icon' => 'table',
                         'activePattern' => 'tables.*',
-                        'visible' => true, // Accessible by both
+                        'visible' => $user->can('view-tables'),
                     ],
                 ],
             ],
             [
                 'header' => 'SALES & ORDERS',
+                'visible' => $user->can('view-orders') || $user->can('view-payments'),
                 'items' => [
                     [
                         'label' => 'Orders',
                         'route' => 'orders.index',
                         'icon' => 'shopping-cart',
                         'activePattern' => 'orders.*',
-                        'visible' => $isStaff,
+                        'visible' => $user->can('view-orders'),
                     ],
                     [
                         'label' => 'Payments',
                         'route' => 'payments.index',
                         'icon' => 'banknote',
                         'activePattern' => 'payments.*',
-                        'visible' => $isStaff,
+                        'visible' => $user->can('view-payments'),
                     ],
                     [
                         'label' => 'Kitchen KDS',
@@ -84,7 +82,7 @@ class NavigationHelper
             ],
             [
                 'header' => 'REPORTS',
-                'visible' => $isAdmin,
+                'visible' => $user->can('view-reports'),
                 'items' => [
                     [
                         'label' => 'Income Report',
@@ -108,35 +106,35 @@ class NavigationHelper
                         'route' => 'users.index',
                         'icon' => 'user-plus',
                         'activePattern' => 'users.*',
-                        'visible' => $isAdmin,
+                        'visible' => $user->can('view-staff'),
                     ],
                     [
                         'label' => 'Roles',
                         'route' => 'roles.index',
                         'icon' => 'shield-check',
                         'activePattern' => 'roles.*',
-                        'visible' => $isAdmin,
+                        'visible' => $user->can('view-roles'),
                     ],
                     [
                         'label' => 'Currency Symbol',
                         'route' => 'currencies.index',
                         'icon' => 'banknote',
                         'activePattern' => 'currencies.*',
-                        'visible' => $isAdmin,
+                        'visible' => $user->can('manage-settings'),
                     ],
                     [
                         'label' => 'Translations',
                         'route' => 'translations.index',
                         'icon' => 'languages',
                         'activePattern' => 'translations.*',
-                        'visible' => $isAdmin,
+                        'visible' => $user->can('manage-translations'),
                     ],
                     [
                         'label' => 'Settings',
                         'route' => 'settings.index',
                         'icon' => 'settings',
                         'activePattern' => 'settings.*',
-                        'visible' => $isAdmin,
+                        'visible' => $user->can('manage-settings'),
                     ],
                     [
                         'label' => 'Logout',

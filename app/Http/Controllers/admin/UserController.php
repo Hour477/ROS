@@ -54,7 +54,13 @@ class UserController extends Controller
             $data['image'] = UploadImageHelper::store($request->file('image_file'), 'users');
         }
 
-        User::create($data);
+        $user = User::create($data);
+
+        // Sync Spatie Role
+        $role = Role::find($request->role_id);
+        if ($role) {
+            $user->assignRole($role->name);
+        }
 
         return redirect()->route('users.index')->with('success', 'User created successfully!');
     }
@@ -86,6 +92,12 @@ class UserController extends Controller
         }
 
         $user->update($data);
+
+        // Sync Spatie Role
+        $role = Role::find($request->role_id);
+        if ($role) {
+            $user->syncRoles([$role->name]);
+        }
 
         return redirect()->route('users.index')->with('success', 'User updated successfully!');
     }

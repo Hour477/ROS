@@ -36,7 +36,7 @@
         <td class="text-center">
             @php
                 $methods = [
-                    'cash' => ['icon' => 'banknote', 'class' => 'bg-info-subtle text-info'],
+                    'cash' => ['icon' => 'banknote', 'class' => 'bg-success-subtle text-success'],
                     'card' => ['icon' => 'credit-card', 'class' => 'bg-primary-subtle text-primary'],
                     'qr' => ['icon' => 'qr-code', 'class' => 'bg-warning-subtle text-warning'],
                     'khqr' => ['icon' => 'qr-code', 'class' => 'bg-danger-subtle text-danger'],
@@ -55,15 +55,12 @@
             </span>
         </td>
         <td class="text-end pe-4">
-            <div class="d-flex justify-content-end gap-2">
-                <a href="{{ route('payments.show', $payment->id) }}" class="btn btn-action view" title="View Transaction / Receipt">
-                    <i data-lucide="eye"></i>
-                </a>
-                <a href="{{ route('orders.receipt', $payment->order_id) }}" class="btn btn-action edit" style="background-color: #f1f5f9; color: #64748b;" title="Print Receipt">
-                    <i data-lucide="printer"></i>
-                </a>
-            </div>
+            <x-table-actions 
+                :viewRoute="route('payments.show', $payment->id)" 
+                :printRoute="route('orders.receipt', $payment->order_id)" 
+            />
         </td>
+        
     </tr>
     @empty
     <tr>
