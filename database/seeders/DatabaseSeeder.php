@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
         );
 
         // Users
-        \App\Models\User::updateOrCreate(
+        User::updateOrCreate(
             ['email' => 'admin@ros.com'],
             [
                 'name' => 'Admin Staff',

@@ -87,6 +87,18 @@ The application will be available at `http://localhost:8000`.
 
 ---
 
+## 🔐 Default Credentials
+
+After running the migrations and seeders (`php artisan migrate --seed`), you can log in with the following default administrator account:
+
+- **Email:** `admin@ros.com`
+- **Password:** `password`
+
+> [!TIP]
+> For security, please change your password immediately after your first login in the User Profile section.
+
+---
+
 ## 📄 License
 
 This project is licensed under the MIT License.
