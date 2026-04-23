@@ -99,6 +99,10 @@ After running the migrations and seeders (`php artisan migrate --seed`), you can
 
 ---
 
-## 📄 License
+## 📄 License 
 
 This project is licensed under the MIT License.
+
+**Contact:** [Hour Dev](https://github.com/Hour477)
+
+## Developer 🧑‍🦱 : Chann Lyhour
