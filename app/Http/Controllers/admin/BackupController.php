@@ -52,10 +52,13 @@ class BackupController extends Controller
         }
 
         $scheduleEnabled = SystemHelper::getSetting('backup_schedule_enabled', '0');
-        $scheduleTime = SystemHelper::getSetting('backup_schedule_time', '19:30');
-        $backupDiskPath = SystemHelper::getSetting('backup_disk_path', storage_path('app'));
+        $scheduleTime    = SystemHelper::getSetting('backup_schedule_time', '02:00');
+        $backupDiskPath  = SystemHelper::getSetting('backup_disk_path', storage_path('app'));
+        $lastBackupTime  = $this->getLastBackupTime();
 
-        return view('admin.backups.index', compact('backups', 'scheduleEnabled', 'scheduleTime', 'backupDiskPath'));
+        return view('admin.backups.index', compact(
+            'backups', 'scheduleEnabled', 'scheduleTime', 'backupDiskPath', 'lastBackupTime'
+        ));
     }
 
     /**
@@ -289,7 +292,12 @@ class BackupController extends Controller
         }
         SystemHelper::forgetSetting('backup_disk_path');
 
-        return back()->with('success', 'Backup task scheduler settings updated successfully.');
+        // Immediately apply the new disk path in this process
+        if ($path) {
+            config(['filesystems.disks.local.root' => $path]);
+        }
+
+        return back()->with('success', 'Backup scheduler settings saved. Next backup at ' . $time . '.');
     }
 
     /**
@@ -301,13 +309,13 @@ class BackupController extends Controller
         try {
             Artisan::call('backup:run', ['--only-db' => true]);
             $output = Artisan::output();
-            // Spatie outputs "Backup completed!" on success
-            if (str_contains($output, 'failed') || str_contains($output, 'error') || str_contains($output, 'Error')) {
-                return back()->with('error', 'Backup encountered an issue: ' . strip_tags($output));
+            // Spatie outputs "Backup completed!" on success, and "failed" on error.
+            if (stripos($output, 'failed') !== false) {
+                return back()->with('error', 'Backup failed: ' . strip_tags($output));
             }
             return back()->with('success', 'Backup created successfully.');
         } catch (Exception $e) {
-            return back()->with('error', 'Failed to start backup: ' . $e->getMessage());
+            return back()->with('error', 'Failed to create backup: ' . $e->getMessage());
         }
     }
 
@@ -356,6 +364,48 @@ class BackupController extends Controller
         }
 
         return back()->with('error', 'Backup file not found.');
+    }
+
+    /**
+     * Get the date/time of the most recent successful backup from laravel.log.
+     * Spatie Backup always writes "[backup] Backup completed!" to the Laravel log channel.
+     */
+    private function getLastBackupTime(): ?string
+    {
+        // Spatie writes to laravel.log via the Laravel log channel
+        $logPath = storage_path('logs/laravel.log');
+        if (!file_exists($logPath)) {
+            return null;
+        }
+        // Read last 50KB to find the most recent backup completion entry
+        try {
+            $size = filesize($logPath);
+            // Guard: fread() requires length > 0 — return null if log file is empty
+            if ($size === 0 || $size === false) {
+                return null;
+            }
+            $fp = fopen($logPath, 'r');
+            if (!$fp) {
+                return null;
+            }
+            $readSize = min($size, 51200); // up to 50 KB from end
+            fseek($fp, -$readSize, SEEK_END);
+            $content = fread($fp, $readSize);
+            fclose($fp);
+        } catch (\Exception $e) {
+            return null;
+        }
+        // Find the LAST line containing "[backup] Backup completed!"
+        $lines = array_reverse(explode("\n", $content));
+        foreach ($lines as $line) {
+            if (str_contains($line, '[backup] Backup completed')) {
+                // Extract timestamp like [2026-05-22 02:43:44]
+                if (preg_match('/\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\]/', $line, $m)) {
+                    return $m[1];
+                }
+            }
+        }
+        return null;
     }
 
     /**

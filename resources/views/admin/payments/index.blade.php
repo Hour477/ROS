@@ -47,7 +47,7 @@
             </div>
         </td>
         <td class="text-center">
-            <code class="text-primary fw-semibold" style="font-size:0.82rem;">{{ $payment->order->order_no }}</code>
+            <code class="text-primary fw-semibold" style="font-size:0.82rem;">{{ $payment->order->order_no ?? 'N/A' }}</code>
         </td>
         <td class="text-center">
             <span class="method-badge {{ $m['class'] }}">

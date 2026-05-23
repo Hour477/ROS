@@ -23,9 +23,9 @@
         <form action="{{ url()->current() }}" method="GET" class="d-flex gap-2 m-0 align-items-center">
             <select name="status" class="form-select form-select-sm select2" onchange="this.form.submit()" style="min-width:130px; border-radius:4px;">
                 <option value="">{{ __('All Statuses') }}</option>
-                <option value="{{ __('Available') }}" {{ request('status') == __('Available') ? 'selected' : '' }}>{{ __('Available') }}</option>
-                <option value="{{ __('Taken') }}"  {{ request('status') == __('Taken')  ? 'selected' : '' }}>{{ __('Taken') }}</option>
-                <option value="{{ __('Reserved') }}"  {{ request('status') == __('Reserved')  ? 'selected' : '' }}>{{ __('Reserved') }}</option>
+                <option value="Available" {{ request('status') == 'Available' ? 'selected' : '' }}>{{ __('Available') }}</option>
+                <option value="Taken"  {{ request('status') == 'Taken'  ? 'selected' : '' }}>{{ __('Taken') }}</option>
+                <option value="Reserved"  {{ request('status') == 'Reserved'  ? 'selected' : '' }}>{{ __('Reserved') }}</option>
             </select>
             @if(request()->anyFilled(['search', 'status']))
             <a href="{{ route('tables.index') }}" class="action-btn reset-btn" title="{{ __('Clear Filters') }}">
@@ -38,11 +38,11 @@
     @forelse($tables as $table)
     @php
     $statusMap = [
-        __('Available') => ['class' => 'available', 'icon' => 'check-circle'],
-        __('Taken')     => ['class' => 'taken',     'icon' => 'user-minus'],
-        __('Reserved')  => ['class' => 'reserved',  'icon' => 'clock'],
+        'available' => ['class' => 'available', 'icon' => 'check-circle'],
+        'taken'     => ['class' => 'taken',     'icon' => 'user-minus'],
+        'reserved'  => ['class' => 'reserved',  'icon' => 'clock'],
     ];
-    $s = $statusMap[$table->status] ?? $statusMap[__('Available')];
+    $s = $statusMap[strtolower($table->status)] ?? $statusMap['available'];
     @endphp
     <tr>
         <td class="text-center" style="width:50px;">

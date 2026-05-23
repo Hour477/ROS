@@ -164,7 +164,7 @@
                         </div>
 
                         <!-- Status Alert/Badge -->
-                        <div class="d-flex align-items-center justify-content-between p-3 rounded mb-4" style="background: {{ $scheduleEnabled == '1' ? '#f0fdf4; border: 1px solid #bbf7d0;' : '#f8fafc; border: 1px solid #e2e8f0;' }}; transition: all 0.3s ease;">
+                        <div class="d-flex align-items-center justify-content-between p-3 rounded mb-3" style="background: {{ $scheduleEnabled == '1' ? '#f0fdf4; border: 1px solid #bbf7d0;' : '#f8fafc; border: 1px solid #e2e8f0;' }}; transition: all 0.3s ease;">
                             <div class="d-flex align-items-center gap-2">
                                 @if($scheduleEnabled == '1')
                                     <span class="d-inline-block rounded-circle bg-success pulse-dot" style="width:8px; height:8px;"></span>
@@ -181,6 +181,19 @@
                                     {{ __('N/A') }}
                                 @endif
                             </span>
+                        </div>
+
+                        <!-- Last Backup Time -->
+                        <div class="d-flex align-items-center gap-2 p-3 rounded mb-4" style="background:#f8fafc; border:1px solid #e2e8f0;">
+                            <i data-lucide="history" class="text-muted" style="width:15px;height:15px;flex-shrink:0;"></i>
+                            <div>
+                                <span class="text-muted small fw-semibold">{{ __('Last Backup:') }}</span>
+                                @if($lastBackupTime)
+                                    <span class="text-dark small font-monospace ms-1">{{ $lastBackupTime }}</span>
+                                @else
+                                    <span class="text-muted small ms-1 fst-italic">{{ __('No backup log found') }}</span>
+                                @endif
+                            </div>
                         </div>
 
                         <!-- Action Button -->

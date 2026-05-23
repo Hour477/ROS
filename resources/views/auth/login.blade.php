@@ -47,11 +47,11 @@
                                 {{ __('Remember Me') }}
                             </label>
                         </div>
-                        @if (Route::has('password.request'))
+                        <!-- @if (Route::has('password.request'))
                             <a class="auth-link" href="{{ route('password.request') }}">
                                 {{ __('Forgot Password?') }}
                             </a>
-                        @endif
+                        @endif -->
                     </div>
 
                     <div class="d-grid gap-2">
@@ -60,9 +60,9 @@
                         </button>
                     </div>
 
-                    <div class="mt-4 text-center">
+                    <!-- <div class="mt-4 text-center">
                         <span class="text-light opacity-75">Don't have an account?</span>
-                    </div>
+                    </div> -->
                 </form>
             </div>
         </div>

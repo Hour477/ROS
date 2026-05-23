@@ -3,11 +3,11 @@
     <div class="col-md-4">
         <div class="card shadow-sm h-100 bg-primary text-white">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3 text-white">
+                <div class="d-flex justify-content-between align-items-center mb-3 text-dark">
                     <span class="fw-bold text-uppercase small">{{ __('Total Gross Income') }}</span>
                     <i data-lucide="dollar-sign" style="width: 24px;"></i>
                 </div>
-                <h2 class="fw-bold mb-1">${{ number_format($stats['total_income'], 2) }}</h2>
+                <h2 class="fw-bold mb-1 text-dark">${{ number_format($stats['total_income'], 2) }}</h2>
                 <p class="mb-0 small opacity-75">{{ __('From') }} {{ $stats['total_transactions'] }} {{ __('transactions') }}</p>
             </div>
         </div>
@@ -143,7 +143,7 @@
             <div class="fw-bold text-dark">{{ $payment->paid_at->format('M d, Y') }}</div>
             <small class="text-muted">{{ $payment->paid_at->format('h:i A') }}</small>
         </td>
-        <td><span class="badge bg-light text-dark border fw-bold">#{{ $payment->order->order_no }}</span></td>
+        <td><span class="badge bg-light text-dark border fw-bold">#{{ $payment->order->order_no ?? 'N/A' }}</span></td>
         <td class="fw-medium">{{ $payment->order->customer->name ?? __('Guest') }}</td>
         <td>
             @php

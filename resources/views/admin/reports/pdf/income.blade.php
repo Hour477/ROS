@@ -58,7 +58,7 @@
             @foreach($payments as $payment)
             <tr>
                 <td>{{ $payment->paid_at->format('M d, Y') }}</td>
-                <td>{{ $payment->order->order_no }}</td>
+                <td>{{ $payment->order->order_no ?? '---' }}</td>
                 <td>{{ $payment->order->customer->name ?? 'Guest' }}</td>
                 <td style="text-transform: uppercase;">{{ $payment->payment_method }}</td>
                 <td class="amount">${{ number_format($payment->total_amount, 2) }}</td>

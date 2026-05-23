@@ -1,6 +1,6 @@
 <header class="admin-navbar shadow-sm">
     @php
-        $isPos = request()->routeIs('pos.index') || request()->routeIs('orders.create') || request()->routeIs('orders.edit') || request()->routeIs('pos.checkout');
+    $isPos = request()->routeIs('pos.index') || request()->routeIs('orders.create') || request()->routeIs('orders.edit') || request()->routeIs('pos.checkout');
     @endphp
 
     <div class="navbar-left d-flex align-items-center gap-2">
@@ -9,7 +9,7 @@
             <i data-lucide="menu"></i>
         </button>
         @endif
-        
+
         @if($isPos)
         <a href="{{ route('home') }}" class="btn btn-light border rounded-pill px-4 fw-bold d-flex align-items-center gap-2 shadow-sm animate__animated animate__fadeInLeft" style="height: 40px; font-size: 0.85rem;">
             <i data-lucide="layout-dashboard" style="width: 18px;" class="text-primary"></i>
@@ -19,10 +19,10 @@
 
         <!-- Global Search Trigger -->
         @if(!$isPos)
-        <button class="nav-search-btn d-none d-lg-flex align-items-center justify-content-between" 
-                data-bs-toggle="modal" 
-                data-bs-target="#commandSearchModal"
-                onclick="window.searchType = 'all';">
+        <button class="nav-search-btn d-none d-lg-flex align-items-center justify-content-between"
+            data-bs-toggle="modal"
+            data-bs-target="#commandSearchModal"
+            onclick="window.searchType = 'all';">
             <div class="d-flex align-items-center gap-2">
                 <i data-lucide="search" style="width: 16px; height: 16px;"></i>
                 <span class="fw-semibold">{{ __('Search...') }}</span>
@@ -35,12 +35,14 @@
     </div>
 
     <div class="navbar-right d-flex align-items-center gap-3">
-        @if(!$isPos)
+        @can('create-orders')
+
         <a href="{{ route('pos.index') }}" class="pos-create-btn animate__animated animate__pulse animate__infinite">
             <i data-lucide="plus-circle"></i>
             <span>POS</span>
         </a>
-        @endif
+
+        @endcan
         <!-- Language Trigger -->
         <button class="btn btn-sm btn-light border-0 rounded-pill px-3 fw-bold d-flex align-items-center gap-2"
             type="button"

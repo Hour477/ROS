@@ -42,7 +42,7 @@ return new class extends Migration
         ");
 
         // After Update
-        DB::unprepared("
+        DB::unprepared(";;
             CREATE TRIGGER tr_after_order_item_update
             AFTER UPDATE ON order_items
             FOR EACH ROW

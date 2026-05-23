@@ -1,15 +1,15 @@
 <!-- Summary & Checkout Area -->
 <div class="summary-details mb-4">
     <div class="d-flex justify-content-between mb-2">
-        <span class="text-muted">Subtotal</span>
+        <span class="text-muted">{{ __('Subtotal') }}</span>
         <span class="fw-bold" id="subtotalLabel">{{ $appSettings['currency'] }}0.00</span>
     </div>
     <div class="d-flex justify-content-between mb-3 pb-3 border-bottom">
-        <span class="text-muted">Tax ({{ $appSettings['tax_percentage'] }}%)</span>
+        <span class="text-muted">{{ __('Tax') }} ({{ $appSettings['tax_percentage'] }}%)</span>
         <span class="fw-bold" id="taxLabel">{{ $appSettings['currency'] }}0.00</span>
     </div>
     <div class="d-flex justify-content-between align-items-center mb-1">
-        <span class="h5 fw-black mb-0">Total</span>
+        <span class="h5 fw-black mb-0">{{ __('Total') }}</span>
         <div class="text-end" id="totalDisplayArea">
             {{-- Area will be updated by JS --}}
         </div>

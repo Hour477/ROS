@@ -2,12 +2,12 @@
 <div class="cart-container d-flex flex-column h-100">
     <div class="p-4 border-bottom bg-light">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h5 class="fw-black mb-0"><i data-lucide="shopping-cart" class="me-2 text-primary"></i>Current Order</h5>
+            <h5 class="fw-black mb-0"><i data-lucide="shopping-cart" class="me-2 text-primary"></i>{{ __('Current Order') }}</h5>
             <div class="d-flex gap-2">
-                <button class="btn btn-sm btn-outline-primary border-2 rounded-circle hover-lift" onclick="persistCartManually()" title="Save / Hold Order">
+                <button class="btn btn-sm btn-outline-primary border-2 rounded-circle hover-lift" onclick="persistCartManually()" title="{{ __('Save Later') }}">
                     <i data-lucide="save" style="width: 16px;"></i>
                 </button>
-                <button class="btn btn-sm btn-outline-danger border-2 rounded-circle hover-lift" onclick="clearCart()" title="Clear Cart">
+                <button class="btn btn-sm btn-outline-danger border-2 rounded-circle hover-lift" onclick="clearCart()" title="{{ __('Clear') }}">
                     <i data-lucide="trash-2" style="width: 16px;"></i>
                 </button>
             </div>
@@ -23,7 +23,7 @@
         {{-- Items will be rendered here by JS --}}
         <div class="text-center py-5 opacity-50 empty-cart-msg">
             <i data-lucide="shopping-bag" class="mb-3" style="width: 48px; height: 48px;"></i>
-            <p class="fw-bold">Your cart is empty</p>
+            <p class="fw-bold">{{ __('Your cart is empty') }}</p>
         </div>
     </div>
 

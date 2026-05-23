@@ -224,7 +224,7 @@
                         <div class="mt-2 extra-small fw-bold text-muted">
                             {{ __('Paid by') }} {{ $order->payment->payer_name ?? __('Mobile account') }}
                             @if($order->payment->payer_account)
-                                <span class="ms-1">({{ $order->payment->payer_account }})</span>
+                            <span class="ms-1">({{ $order->payment->payer_account }})</span>
                             @endif
                         </div>
                         @endif
@@ -409,6 +409,10 @@
     }
 
     @media print {
+        @page {
+            margin: 0;
+            size: 80mm auto;
+        }
 
         /* Hide everything not related to the receipt */
         .sidebar,
@@ -421,7 +425,6 @@
         .card-header,
         select,
         .info-label,
-        .extra-small,
         .header-info p,
         a,
         button {
@@ -432,12 +435,15 @@
             background: white !important;
             margin: 0 !important;
             padding: 0 !important;
-            font-size: 12pt;
+            font-family: 'Kantumruy Pro', sans-serif !important;
+            font-size: 10pt !important;
+            color: #000 !important;
         }
 
         .order-show-page {
-            padding: 0 !important;
-            margin: 0 !important;
+            padding: 10px !important;
+            margin: 0 auto !important;
+            width: 80mm !important;
             max-width: 100% !important;
         }
 
@@ -448,12 +454,14 @@
 
         .content-wrapper {
             padding: 0 !important;
+            background-color: white !important;
         }
 
         .card {
             border: none !important;
             box-shadow: none !important;
             width: 100% !important;
+            background: transparent !important;
         }
 
         .col-lg-8,
@@ -471,28 +479,54 @@
 
         /* Receipt Header Styling */
         .responsive-h2 {
-            font-size: 24pt !important;
-            text-align: center;
-            margin-bottom: 20px !important;
-            border-bottom: 2px solid #000;
-            padding-bottom: 10px;
+            font-size: 14pt !important;
+            font-weight: bold !important;
+            text-align: center !important;
+            margin-bottom: 10px !important;
+            border-bottom: 1px dashed #000 !important;
+            padding-bottom: 10px !important;
+        }
+
+        .text-muted {
+            color: #000 !important;
+            font-size: 9pt !important;
         }
 
         /* Invoice Style Table */
         table {
             width: 100% !important;
             border-collapse: collapse !important;
+            margin-bottom: 10px !important;
         }
 
         th {
-            background-color: #f8fafc !important;
-            -webkit-print-color-adjust: exact;
-            border-bottom: 1px solid #000 !important;
+            background-color: transparent !important;
+            color: #000 !important;
+            border-bottom: 1px dashed #000 !important;
+            font-size: 9pt !important;
+            padding: 5px 0 !important;
         }
 
         td {
-            border-bottom: 1px solid #eee !important;
-            padding: 10px 0 !important;
+            border-bottom: 1px dashed #eee !important;
+            padding: 5px 0 !important;
+            font-size: 10pt !important;
+            color: #000 !important;
+        }
+
+        .badge,
+        .bg-light,
+        .bg-white {
+            background: transparent !important;
+            border: none !important;
+            padding: 0 !important;
+            color: #000 !important;
+        }
+
+        .px-3.py-1.bg-light.rounded-pill.border.fw-bold {
+            border: none !important;
+            padding: 0 !important;
+            font-weight: normal !important;
         }
 
         .image-container,
@@ -500,20 +534,27 @@
             display: none !important;
         }
 
-        /* Hide images for cleaner print */
-
         .card-body {
             padding: 0 !important;
         }
 
         /* Total Section */
-        .h3 {
-            font-size: 20pt !important;
+        .h3,
+        .fw-black {
+            font-size: 12pt !important;
+            color: black !important;
+            font-weight: bold !important;
+        }
+
+        .text-primary,
+        .text-success,
+        .text-warning,
+        .text-danger {
             color: black !important;
         }
 
-        .text-primary {
-            color: black !important;
+        .border-bottom {
+            border-bottom: 1px dashed #000 !important;
         }
 
         /* Layout Fixes */
@@ -524,6 +565,19 @@
         .justify-content-between {
             display: flex !important;
             justify-content: space-between !important;
+        }
+
+        .d-flex.align-items-center.gap-3.mb-4,
+        .d-flex.align-items-center.gap-3 {
+            margin-bottom: 5px !important;
+        }
+
+        .icon-box {
+            display: none !important;
+        }
+
+        .workflow-selector {
+            display: none !important;
         }
     }
 

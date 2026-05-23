@@ -14,16 +14,16 @@
                         <div class="header-info">
                             <h4 class="fw-black mb-1 responsive-h2" style="color: #0f172a; letter-spacing: -0.5px;">
                                 @if(isset($existingOrder) && $existingOrder)
-                                Resume #{{ $existingOrder->order_no }}
+                                {{ __('Resume') }} #{{ $existingOrder->order_no }}
                                 @else
-                                New Order
+                                {{ __('New Order') }}
                                 @endif
                             </h4>
                             <p class="text-muted small mb-0 fw-medium">
                                 @if(isset($existingOrder) && $existingOrder)
-                                <span class="badge bg-warning-subtle text-warning border-warning border-opacity-25 px-2">Draft</span> Modification in progress
+                                <span class="badge bg-warning-subtle text-warning border-warning border-opacity-25 px-2">{{ __('Draft') }}</span> {{ __('Modification in progress') }}
                                 @else
-                                <span class="badge bg-success-subtle text-success border-success border-opacity-25 px-2">New</span> Start a fresh service
+                                <span class="badge bg-success-subtle text-success border-success border-opacity-25 px-2">{{ __('New') }}</span> {{ __('Start a fresh service') }}
                                 @endif
                             </p>
                         </div>
@@ -389,7 +389,7 @@
             container.innerHTML = `
                 <div class="text-center py-5 opacity-50">
                     <i data-lucide="shopping-bag" class="mb-3" style="width: 48px; height: 48px;"></i>
-                    <p class="fw-bold">Your cart is empty</p>
+                    <p class="fw-bold">{{ __('Your cart is empty') }}</p>
                 </div>`;
             updateTotals(0);
             if (window.lucide) lucide.createIcons();
@@ -465,7 +465,7 @@
 
     function goToCheckout(btn) {
         if (cart.length === 0) {
-            alert('Your cart is empty.');
+            alert("{{ __('Your cart is empty.') }}");
             return;
         }
 

@@ -19,7 +19,7 @@
     <div class="row g-4">
         <!-- Left: Role Form -->
         <div class="col-lg-4">
-            <div class="card border sticky-top" style="border-color:#dee2e6 !important; border-radius:6px; top:20px;">
+            <div class="card border sticky-top" style="border-color:#dee2e6 !important; border-radius:6px; top:20px; z-index:10;">
                 <div class="card-header bg-white border-bottom py-3 px-4" style="border-color:#dee2e6 !important;">
                     <span class="fw-semibold small text-dark">{{ __('Role Details') }}</span>
                 </div>
@@ -76,20 +76,20 @@
                             'table'       => ['icon' => 'layout',        'color' => '#f59e0b'],
                             'payment'     => ['icon' => 'credit-card',   'color' => '#0ea5e9'],
                             'user'        => ['icon' => 'users',         'color' => '#ec4899'],
-                            'customer'    => ['icon' => 'user-check',    'color' => '#14b8a6'],
                             'role'        => ['icon' => 'shield-check',  'color' => '#f43f5e'],
                             'setting'     => ['icon' => 'settings',      'color' => '#64748b'],
                             'report'      => ['icon' => 'bar-chart-3',   'color' => '#8b5cf6'],
                             'translation' => ['icon' => 'languages',     'color' => '#f59e0b'],
-                            'backup'      => ['icon' => 'database',      'color' => '#3b82f6'],
                             'kitchen'     => ['icon' => 'flame',         'color' => '#ef4444'],
+                            //'customer'    => ['icon' => 'user-check',    'color' => '#14b8a6'],
+                            
                         ];
                         $iconMap = ['view'=>'eye','create'=>'plus-circle','edit'=>'edit-3','delete'=>'trash-2','manage'=>'settings-2','void'=>'slash','refund'=>'rotate-ccw'];
                         @endphp
 
                         @foreach($groups as $prefix => $style)
                         <div class="col-md-6 col-xl-4">
-                            <div class="perm-card border bg-white p-3" style="border-color:#dee2e6 !important; border-radius:6px;">
+                            <div class="perm-card h-100 border bg-white p-3" style="border-color:#dee2e6 !important; border-radius:6px;">
                                 <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom" style="border-color:#f1f3f5 !important;">
                                     <div class="d-flex align-items-center gap-2">
                                         <div class="perm-icon" style="background:{{ $style['color'] }}18; color:{{ $style['color'] }};">

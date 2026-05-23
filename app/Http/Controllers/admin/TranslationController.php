@@ -57,6 +57,9 @@ class TranslationController extends Controller
         ]);
 
         Translation::create($request->all());
+        
+        \Cache::forget('lang_sync_en');
+        \Cache::forget('lang_sync_kh');
 
         return redirect()->route('translations.index')->with('success', 'Translation created successfully');
     }
@@ -84,6 +87,9 @@ class TranslationController extends Controller
         ]);
 
         $translation->update($request->all());
+        
+        \Cache::forget('lang_sync_en');
+        \Cache::forget('lang_sync_kh');
 
         return redirect()->route('translations.index')->with('success', 'Translation updated successfully');
     }
@@ -95,6 +101,10 @@ class TranslationController extends Controller
     {
         $this->authorize('delete', $translation);
         $translation->delete();
+        
+        \Cache::forget('lang_sync_en');
+        \Cache::forget('lang_sync_kh');
+        
         return redirect()->route('translations.index')->with('success', 'Translation deleted successfully');
     }
 }
